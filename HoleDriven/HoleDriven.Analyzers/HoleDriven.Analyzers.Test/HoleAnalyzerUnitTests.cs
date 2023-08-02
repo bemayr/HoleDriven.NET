@@ -57,25 +57,25 @@ namespace HoleDriven.Analyzers.Test
             await test.RunAsync();
         }
 
-        private static DiagnosticResult GetRS1018ExpectedDiagnostic(int markupKey, string diagnosticId, string category, string format, string additionalFile) =>
-            new DiagnosticResult(HoleAnalyzer.Rules.Get)
-                .WithLocation(markupKey)
-                .WithArguments(diagnosticId, category, format, additionalFile);
-
         [TestMethod]
         public async Task HoleGet_TriggersWarning_NoCSVerify()
         {
-            var source = @"
+            var description = "Some Testing Dummy Description";
+            var source = $@"
         using System;
         using Holedriven;
 
-        internal class Program
-        {
-            static void Main(string[] args)
-            {
-                {|#1:Hole.Set(""adfasdf"")|};
-            }
-        }";
+        public class Program {{
+            public static void Main() {{
+                // Hole.Set
+                {{|#1:Hole.Set(""{description}"")|}};
+
+                // Hole.Get
+                var three = {{|#2:Hole.Get(""adfasdf"", 3)|}};
+            }}
+        }}
+
+        ";
 
             var analyzerTest = new CSharpAnalyzerTest<HoleAnalyzer, MSTestVerifier>
             {
@@ -94,6 +94,10 @@ namespace HoleDriven.Analyzers.Test
                     {
                         new DiagnosticResult(HoleAnalyzer.Rules.Set)
                             .WithLocation(1)
+                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithArguments(description),
+                        new DiagnosticResult(HoleAnalyzer.Rules.Get)
+                            .WithLocation(2)
                             .WithSeverity(DiagnosticSeverity.Warning)
                             .WithArguments("adfasdf")
                     }
