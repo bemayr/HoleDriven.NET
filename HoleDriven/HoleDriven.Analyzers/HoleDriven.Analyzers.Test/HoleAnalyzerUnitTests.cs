@@ -58,7 +58,7 @@ namespace HoleDriven.Analyzers.Test
         }
 
         [TestMethod]
-        public async Task HoleGet_TriggersWarning_NoCSVerify()
+        public async Task Hole_Triggers_Analyzer_Debug()
         {
             var description = "Some Testing Dummy Description";
             var source = $@"
@@ -114,5 +114,67 @@ namespace HoleDriven.Analyzers.Test
             await analyzerTest.RunAsync();
         }
 
+        [TestMethod]
+        public async Task Hole_Triggers_Analyzer_Release()
+        {
+            var description = "Some Testing Dummy Description";
+            var source = $@"
+        using System;
+        using Holedriven;
+
+        public class Program {{
+            public static void Main() {{
+                // Hole.Set
+                {{|#1:Hole.Set(""{description}"")|}};
+
+                // Hole.Get
+                var three = {{|#2:Hole.Get(""adfasdf"", 3)|}};
+            }}
+        }}
+
+        ";
+
+            var analyzerTest = new CSharpAnalyzerTest<HoleAnalyzer, MSTestVerifier>
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    ReferenceAssemblies = new ReferenceAssemblies(
+                        "net6.0",
+                        new PackageIdentity("Microsoft.NETCore.App.Ref", "6.0.0"),
+                        Path.Combine("ref", "net6.0")),
+                    AdditionalReferences =
+                    {
+                        MetadataReference.CreateFromFile(typeof(Holedriven.Hole).Assembly.Location)
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        new DiagnosticResult(HoleAnalyzer.Rules.Set)
+                            .WithLocation(1)
+                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithArguments(description),
+                        new DiagnosticResult(HoleAnalyzer.Rules.Get)
+                            .WithLocation(2)
+                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithArguments("adfasdf")
+                    }
+                },
+
+            };
+
+            analyzerTest.SolutionTransforms.Add((solution, projectId) =>
+            {
+                //return solution.WithProjectParseOptions(projectId,
+                //    new CSharpParseOptions()
+                //        .WithPreprocessorSymbols("RELEASE")
+                //        .WithPreprocessorSymbols("HELLO"));
+
+                return solution.WithProjectCompilationOptions(
+                    projectId,
+                    new CSharpCompilationOptions(OutputKind.ConsoleApplication).WithOptimizationLevel(OptimizationLevel.Release));
+            });
+
+            await analyzerTest.RunAsync();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System;
 using System.Collections.Immutable;
 
 namespace HoleDriven.Analyzers
@@ -89,6 +90,11 @@ namespace HoleDriven.Analyzers
                 if (compilationContext.Compilation.GetTypeByMetadataName("Holedriven.Hole") is null)
                     return;
 
+                var compilation = compilationContext.Compilation;
+                Console.WriteLine(compilation.Options.Platform);
+                Console.WriteLine(compilation.Options.WarningLevel);
+                Console.WriteLine(compilation.Options.OptimizationLevel);
+
                 compilationContext.RegisterSyntaxNodeAction(AnalyzeHole, SyntaxKind.InvocationExpression);
             });
         }
@@ -133,10 +139,26 @@ namespace HoleDriven.Analyzers
                 _ => null,
             };
 
+            var mode = "";
             if (diagnosticDescriptor is not null)
             {
+#if DEBUG
+                Console.WriteLine("Mode = Debug");
+                mode = "Debug";
+#else
+                Console.WriteLine("Mode = Release"); 
+                mode = "Release";
+#endif
+
+#if HELLO
+                Console.WriteLine("HELLO = yes :)");
+#else
+                Console.WriteLine("HELLO = no :(");
+#endif
+
+
                 var location = invocationExpression.GetLocation();
-                var diagnostic = Diagnostic.Create(diagnosticDescriptor, location, description);
+                var diagnostic = Diagnostic.Create(diagnosticDescriptor, location, description + $" ({mode})");
                 context.ReportDiagnostic(diagnostic);
             }
         }
