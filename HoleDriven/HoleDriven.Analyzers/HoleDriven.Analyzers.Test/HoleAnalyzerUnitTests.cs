@@ -1,7 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Immutable;
+using System.IO;
 using System.Threading.Tasks;
 using VerifyCS = HoleDriven.Analyzers.Test.CSharpCodeFixVerifier<
     HoleDriven.Analyzers.HoleAnalyzer,
@@ -32,7 +36,7 @@ namespace HoleDriven.Analyzers.Test
     {
         static void Main(string[] args)
         {
-            [|HD0001:Hole.Set(""adfasdf"")|];
+            [|Hole.Get:Hole.Set(""adfasdf"")|];
         }
     }";
             // https://github.com/shuebner/OneOfDiagnosticSuppressor/blob/main/OneOfDiagnosticSuppressor.Tests/CompilationHelper.cs#L23
@@ -53,42 +57,58 @@ namespace HoleDriven.Analyzers.Test
             await test.RunAsync();
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
-        //    [TestMethod]
-        //    public async Task TestMethod2()
-        //    {
-        //        var test = @"
-        //using System;
-        //using System.Collections.Generic;
-        //using System.Linq;
-        //using System.Text;
-        //using System.Threading.Tasks;
-        //using System.Diagnostics;
+        private static DiagnosticResult GetRS1018ExpectedDiagnostic(int markupKey, string diagnosticId, string category, string format, string additionalFile) =>
+            new DiagnosticResult(HoleAnalyzer.Rules.Get)
+                .WithLocation(markupKey)
+                .WithArguments(diagnosticId, category, format, additionalFile);
 
-        //namespace ConsoleApplication1
-        //{
-        //    class {|#0:TypeName|}
-        //    {   
-        //    }
-        //}";
+        [TestMethod]
+        public async Task HoleGet_TriggersWarning_NoCSVerify()
+        {
+            var source = @"
+        using System;
+        using Holedriven;
 
-        //        var fixtest = @"
-        //using System;
-        //using System.Collections.Generic;
-        //using System.Linq;
-        //using System.Text;
-        //using System.Threading.Tasks;
-        //using System.Diagnostics;
+        internal class Program
+        {
+            static void Main(string[] args)
+            {
+                {|#1:Hole.Set(""adfasdf"")|};
+            }
+        }";
 
-        //namespace ConsoleApplication1
-        //{
-        //    class TYPENAME
-        //    {   
-        //    }
-        //}";
+            var analyzerTest = new CSharpAnalyzerTest<HoleAnalyzer, MSTestVerifier>
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    ReferenceAssemblies = new ReferenceAssemblies(
+                        "net6.0",
+                        new PackageIdentity("Microsoft.NETCore.App.Ref", "6.0.0"),
+                        Path.Combine("ref", "net6.0")),
+                    AdditionalReferences =
+                    {
+                        MetadataReference.CreateFromFile(typeof(Holedriven.Hole).Assembly.Location)
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        new DiagnosticResult(HoleAnalyzer.Rules.Set)
+                            .WithLocation(1)
+                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithArguments("adfasdf")
+                    }
+                },
+            };
 
-        //        var expected = VerifyCS.Diagnostic("HoleDrivenAnalyzers").WithLocation(0).WithArguments("TypeName");
-        //        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        //    }
+            analyzerTest.SolutionTransforms.Add((solution, projectId) =>
+            {
+                return solution.WithProjectParseOptions(projectId,
+                    new CSharpParseOptions()
+                        .WithPreprocessorSymbols("DEBUG"));
+            });
+
+            await analyzerTest.RunAsync();
+        }
+
     }
 }

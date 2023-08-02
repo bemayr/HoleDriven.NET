@@ -9,7 +9,7 @@ namespace HoleDriven.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class HoleAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "HD0001";
+        public const string DiagnosticId = "Hole.Get";
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md for more on localization
@@ -19,10 +19,55 @@ namespace HoleDriven.Analyzers
 
         private static LocalizableString GetResourceString(string name) => new LocalizableResourceString(name, Resources.ResourceManager, typeof(Resources));
 
-        private static class Rules
+        public static class Rules
         {
-            internal static readonly DiagnosticDescriptor Get = new DiagnosticDescriptor(
-                id: DiagnosticId,
+            public static readonly DiagnosticDescriptor Get = new DiagnosticDescriptor(
+                id: "HD0001",
+                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
+                messageFormat: MessageFormat,
+                category: Category,
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: Description);
+
+            public static readonly DiagnosticDescriptor Refactor = new DiagnosticDescriptor(
+                id: "HD0002",
+                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
+                messageFormat: MessageFormat,
+                category: Category,
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: Description);
+
+            public static readonly DiagnosticDescriptor Set = new DiagnosticDescriptor(
+                id: "HD0003",
+                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
+                messageFormat: MessageFormat,
+                category: Category,
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: Description);
+
+            public static readonly DiagnosticDescriptor SetAsync = new DiagnosticDescriptor(
+                id: "HD0004",
+                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
+                messageFormat: MessageFormat,
+                category: Category,
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: Description);
+
+            public static readonly DiagnosticDescriptor Throw = new DiagnosticDescriptor(
+                id: "HD0005",
+                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
+                messageFormat: MessageFormat,
+                category: Category,
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: Description);
+
+            public static readonly DiagnosticDescriptor Idea = new DiagnosticDescriptor(
+                id: "HD0006",
                 title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
                 messageFormat: MessageFormat,
                 category: Category,
@@ -31,7 +76,7 @@ namespace HoleDriven.Analyzers
                 description: Description);
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rules.Get); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rules.Get, Rules.Set, Rules.SetAsync, Rules.Throw, Rules.Idea, Rules.Refactor); } }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -57,7 +102,6 @@ namespace HoleDriven.Analyzers
             if (holeExpression.Identifier.Text != "Hole")
                 return; // we are not dealing with a Hole expression
 
-            //var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol;
             var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol as IMethodSymbol;
             if (!methodSymbol?.ToString().StartsWith("Holedriven.Hole") ?? true)
                 return; // the Hole we detected did not originate from the Holedriven library
@@ -78,28 +122,23 @@ namespace HoleDriven.Analyzers
             if (description is null)
                 return;
 
-            switch (methodSymbol.Name)
+            var diagnosticDescriptor = methodSymbol.Name switch
             {
-                case "Set":
-                    var location1 = Location.Create(invocationExpression.SyntaxTree, invocationExpression.FullSpan);
-                    var location2 = invocationExpression.GetLocation();
-                    var diagnostic = Diagnostic.Create(Rules.Get, location1, description);
-                    context.ReportDiagnostic(diagnostic);
-                    break;
+                nameof(Rules.Get) => Rules.Get,
+                nameof(Rules.Set) => Rules.Set,
+                nameof(Rules.SetAsync) => Rules.Set,
+                nameof(Rules.Throw) => Rules.Throw,
+                nameof(Rules.Idea) => Rules.Idea,
+                nameof(Rules.Refactor) => Rules.Refactor,
+                _ => null,
+            };
+
+            if (diagnosticDescriptor is not null)
+            {
+                var location = invocationExpression.GetLocation();
+                var diagnostic = Diagnostic.Create(diagnosticDescriptor, location, description);
+                context.ReportDiagnostic(diagnostic);
             }
-
-
-            //// TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            //var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-
-            //// Find just those named type symbols with names containing lowercase letters.
-            //if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
-            //{
-            //    // For all such symbols, produce a diagnostic.
-            //    var diagnostic = Diagnostic.Create(GetRule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
-
-            //    context.ReportDiagnostic(diagnostic);
-            //}
         }
     }
 }
