@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Holedriven;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
@@ -9,7 +10,18 @@ namespace HoleDriven.Analyzers.Tests
 {
     public class HoleAnalyzerTests : HoleAnalyzerTestsBase
     {
+        private const string DUMMY_HOLE_DESCRIPTION = "Testing the Hole Description 🧪";
+
         public HoleAnalyzerTests(ITestOutputHelper output) : base(output) { }
+
+        public static IEnumerable<object[]> GetSourceFiles() =>
+            from file in Data.SourceFiles
+            select new[] { new HoleAnalyzerTestInput
+            {
+                Name = Path.GetFileNameWithoutExtension(file),
+                Source = File.ReadAllText(file),
+                ExpectedDiagnostic = Path.GetFileName(file).Split(".")[0]
+            } };
 
         [Fact]
         public void Sourcecode_Preparation_Works()
@@ -46,20 +58,19 @@ namespace HoleDriven.Analyzers.Tests
         }
 
         [Theory]
-        [InlineData("TestData/Get.cs")]
-        [InlineData("TestData/Set.cs")]
-        public async Task Holes_are_Reported_as_Info_in_Debug_Mode(string sourcePath)
+        [Trait("Category", "Engine")]
+        [MemberData(nameof(GetSourceFiles))]
+        public async Task Holes_are_Reported_as_Info_in_Debug_Mode(HoleAnalyzerTestInput input)
         {
             // Arrange
-            var expectedDiagnosticDescriptor = HoleAnalyzer.Rules.Get;
-            var holeDescription = "Some Test Description";
-            var source = PrepareSourcecode(LoadSourceFile(sourcePath), holeDescription);
+            var expectedDiagnosticDescriptor = Data.GetDiagnosticDescriptor(input.ExpectedDiagnostic);
+            var source = PrepareSourcecode(input.Source, DUMMY_HOLE_DESCRIPTION);
 
             // Act
             var test = CreateTest(
                 source,
                 expectedDiagnosticDescriptor,
-                holeDescription,
+                DUMMY_HOLE_DESCRIPTION,
                 DiagnosticSeverity.Info,
                 OptimizationLevel.Debug);
 
@@ -68,20 +79,19 @@ namespace HoleDriven.Analyzers.Tests
         }
 
         [Theory]
-        [InlineData("TestData/Get.cs")]
-        [InlineData("TestData/Set.cs")]
-        public async Task Holes_are_Reported_as_Error_in_Release_Mode(string sourcePath)
+        [Trait("Category", "Engine")]
+        [MemberData(nameof(GetSourceFiles))]
+        public async Task Holes_are_Reported_as_Error_in_Release_Mode(HoleAnalyzerTestInput input)
         {
             // Arrange
-            var expectedDiagnosticDescriptor = HoleAnalyzer.Rules.Get;
-            var holeDescription = "Some Test Description";
-            var source = PrepareSourcecode(LoadSourceFile(sourcePath), holeDescription);
+            var expectedDiagnosticDescriptor = Data.GetDiagnosticDescriptor(input.ExpectedDiagnostic);
+            var source = PrepareSourcecode(input.Source, DUMMY_HOLE_DESCRIPTION);
 
             // Act
             var test = CreateTest(
                 source,
                 expectedDiagnosticDescriptor,
-                holeDescription,
+                DUMMY_HOLE_DESCRIPTION,
                 DiagnosticSeverity.Error,
                 OptimizationLevel.Release);
 
@@ -97,8 +107,6 @@ namespace HoleDriven.Analyzers.Tests
                 .Replace("/*{|ExpectedDiagnosticLocation:*/", $"{{|#{DIAGNOSTIC_LOCATION}:")
                 .Replace("/*description*/", description)
                 .Replace("/*|}*/", "|}");
-
-        public static string LoadSourceFile(string path) => File.ReadAllText(path);
 
         public static CSharpAnalyzerTest<HoleAnalyzer, XUnitVerifier> CreateTest(
             string source,
@@ -137,5 +145,70 @@ namespace HoleDriven.Analyzers.Tests
 
             return analyzerTest;
         }
+    }
+
+    internal static class Data
+    {
+        public static IEnumerable<string> SourceFiles
+        {
+            get
+            {
+                var holeSourcesPath = Path.Combine(Environment.CurrentDirectory, "TestData");
+                var holeSourcesFiles = Directory.EnumerateFiles(holeSourcesPath, "*.cs", SearchOption.AllDirectories);
+                return holeSourcesFiles;
+            }
+        }
+
+        public static DiagnosticDescriptor GetDiagnosticDescriptor(string methodName) => methodName switch
+        {
+            nameof(Hole.Get) => HoleAnalyzer.Rules.Get,
+            nameof(Hole.Set) => HoleAnalyzer.Rules.Set,
+            nameof(Hole.Throw) => HoleAnalyzer.Rules.Throw,
+            nameof(Hole.Refactor) => HoleAnalyzer.Rules.Refactor,
+            _ => throw new NotImplementedException($"no Analyzer available for this {methodName}")
+        };
+    }
+
+    // used for NCrunch: https://forum.ncrunch.net/yaf_postst3132_IXunitSerializable-and-serializable.aspx
+    [Serializable]
+    public record HoleAnalyzerTestInput : IXunitSerializable
+    {
+        private string? name;
+        public string Name
+        {
+            get => name ?? throw new NullReferenceException($"{nameof(Name)} can't be null.");
+            init => name = value;
+        }
+        private string? source;
+        public string Source
+        {
+            get => source ?? throw new NullReferenceException($"{nameof(Source)} can't be null.");
+            init => source = value;
+        }
+
+        private string? expectedDiagnostic;
+        public string ExpectedDiagnostic
+        {
+            get => expectedDiagnostic ?? throw new NullReferenceException($"{nameof(ExpectedDiagnostic)} can't be null.");
+            init => expectedDiagnostic = value;
+        }
+
+        // needed for IXUnitSerializable
+        public HoleAnalyzerTestInput() { }
+
+        // needed for test case distinction: https://github.com/xunit/xunit/issues/1473
+        public void Deserialize(IXunitSerializationInfo info)
+        {
+            name = info.GetValue<string>("name");
+            source = info.GetValue<string>("source");
+            expectedDiagnostic = info.GetValue<string>("expectedDiagnostic");
+        }
+        public void Serialize(IXunitSerializationInfo info)
+        {
+            info.AddValue("name", Name, typeof(string));
+            info.AddValue("source", Source, typeof(string));
+            info.AddValue("expectedDiagnostic", ExpectedDiagnostic, typeof(string));
+        }
+        public override string ToString() => Name;
     }
 }

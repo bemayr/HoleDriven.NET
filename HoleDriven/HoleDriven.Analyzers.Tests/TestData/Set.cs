@@ -1,8 +1,8 @@
 ﻿using Holedriven;
 
-namespace HoleDriven.Analyzers.Tests.TestData.HD0001
+namespace HoleDriven.Analyzers.Tests.TestData
 {
-    public class Get
+    public class Set
     {
         public static void Print()
         {
