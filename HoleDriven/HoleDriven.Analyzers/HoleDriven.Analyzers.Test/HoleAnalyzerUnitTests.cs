@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Immutable;
-using System.IO;
 using System.Threading.Tasks;
 using VerifyCS = HoleDriven.Analyzers.Test.CSharpCodeFixVerifier<
     HoleDriven.Analyzers.HoleAnalyzer,
@@ -82,10 +81,6 @@ namespace HoleDriven.Analyzers.Test
                 TestState =
                 {
                     Sources = { source },
-                    ReferenceAssemblies = new ReferenceAssemblies(
-                        "net6.0",
-                        new PackageIdentity("Microsoft.NETCore.App.Ref", "6.0.0"),
-                        Path.Combine("ref", "net6.0")),
                     AdditionalReferences =
                     {
                         MetadataReference.CreateFromFile(typeof(Holedriven.Hole).Assembly.Location)
@@ -112,10 +107,13 @@ namespace HoleDriven.Analyzers.Test
             });
 
             analyzerTest.SolutionTransforms.Add((solution, projectId) =>
-                solution.WithProjectCompilationOptions(
+            {
+                var compilationOptions = solution.GetProject(projectId)!.CompilationOptions!;
+
+                return solution.WithProjectCompilationOptions(
                     projectId,
-                    new CSharpCompilationOptions(OutputKind.ConsoleApplication).WithOptimizationLevel(OptimizationLevel.Debug))
-            );
+                    compilationOptions.WithOptimizationLevel(OptimizationLevel.Debug));
+            });
 
             await analyzerTest.RunAsync();
         }
@@ -145,10 +143,6 @@ namespace HoleDriven.Analyzers.Test
                 TestState =
                 {
                     Sources = { source },
-                    ReferenceAssemblies = new ReferenceAssemblies(
-                        "net6.0",
-                        new PackageIdentity("Microsoft.NETCore.App.Ref", "6.0.0"),
-                        Path.Combine("ref", "net6.0")),
                     AdditionalReferences =
                     {
                         MetadataReference.CreateFromFile(typeof(Holedriven.Hole).Assembly.Location)
@@ -170,14 +164,11 @@ namespace HoleDriven.Analyzers.Test
 
             analyzerTest.SolutionTransforms.Add((solution, projectId) =>
             {
-                //return solution.WithProjectParseOptions(projectId,
-                //    new CSharpParseOptions()
-                //        .WithPreprocessorSymbols("RELEASE")
-                //        .WithPreprocessorSymbols("HELLO"));
+                var compilationOptions = solution.GetProject(projectId)!.CompilationOptions!;
 
                 return solution.WithProjectCompilationOptions(
                     projectId,
-                    new CSharpCompilationOptions(OutputKind.ConsoleApplication).WithOptimizationLevel(OptimizationLevel.Release));
+                    compilationOptions.WithOptimizationLevel(OptimizationLevel.Release));
             });
 
             await analyzerTest.RunAsync();
