@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Holedriven
+namespace HoleDriven
 {
     public static partial class Hole
     {

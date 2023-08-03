@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Analyzers.Vsix",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{BACFFADC-D79C-47D5-83D5-A4FB08069593}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Analyzers.Tests", "HoleDriven.Analyzers.Tests\HoleDriven.Analyzers.Tests.csproj", "{52721289-887B-4470-8E7E-F24E82B58898}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Analyzers.Tests", "HoleDriven.Analyzers.Tests\HoleDriven.Analyzers.Tests.csproj", "{52721289-887B-4470-8E7E-F24E82B58898}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

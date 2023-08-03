@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<!-- Explicitly Disable ImplicitUsings, so that the Tests have to specify their imports for Roslyn to pick it up properly -->
+		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 

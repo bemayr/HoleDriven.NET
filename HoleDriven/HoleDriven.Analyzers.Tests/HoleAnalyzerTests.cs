@@ -1,8 +1,13 @@
-﻿using Holedriven;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 using Xunit.Abstractions;
 using static HoleDriven.Analyzers.Tests.HoleAnalyzerTestsHelpers;
 
@@ -28,7 +33,7 @@ namespace HoleDriven.Analyzers.Tests
         {
             // Arrange
             var source = @"
-using Holedriven;
+using HoleDriven;
 
 namespace HoleDriven.Analyzers.Tests
 {
@@ -38,7 +43,7 @@ namespace HoleDriven.Analyzers.Tests
     }
 }";
             var expected = @"
-using Holedriven;
+using HoleDriven;
 
 namespace HoleDriven.Analyzers.Tests
 {
@@ -122,7 +127,7 @@ namespace HoleDriven.Analyzers.Tests
                     Sources = { source },
                     AdditionalReferences =
                     {
-                        MetadataReference.CreateFromFile(typeof(Holedriven.Hole).Assembly.Location)
+                        MetadataReference.CreateFromFile(typeof(HoleDriven.Hole).Assembly.Location)
                     },
                     ExpectedDiagnostics =
                     {
@@ -161,10 +166,13 @@ namespace HoleDriven.Analyzers.Tests
 
         public static DiagnosticDescriptor GetDiagnosticDescriptor(string methodName) => methodName switch
         {
-            nameof(Hole.Provide) => HoleAnalyzer.Rules.Get,
-            nameof(Hole.Effect) => HoleAnalyzer.Rules.Set,
-            nameof(Hole.Throw) => HoleAnalyzer.Rules.Throw,
             nameof(Hole.Refactor) => HoleAnalyzer.Rules.Refactor,
+            nameof(Hole.Idea) => HoleAnalyzer.Rules.Idea,
+            nameof(Hole.Effect) => HoleAnalyzer.Rules.Effect,
+            nameof(Hole.EffectAsync) => HoleAnalyzer.Rules.EffectAsync,
+            nameof(Hole.Provide) => HoleAnalyzer.Rules.Provide,
+            nameof(Hole.ProvideAsync) => HoleAnalyzer.Rules.ProvideAsync,
+            nameof(Hole.Throw) => HoleAnalyzer.Rules.Throw,
             _ => throw new NotImplementedException($"no Analyzer available for this {methodName}")
         };
     }

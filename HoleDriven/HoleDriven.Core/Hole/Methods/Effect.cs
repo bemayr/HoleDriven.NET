@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Holedriven
+namespace HoleDriven
 {
     public static partial class Hole
     {
@@ -11,7 +11,11 @@ namespace Holedriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            ReportHole(nameof(Effect), $"[🕳️]: {description} ({new { callerFilePath, callerLineNumber, callerMemberName }})");
+            ReportHole(description, new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName));
+            ReportEffectHappened(description);
         }
+
+        internal static void ReportEffectHappened(string description) =>
+            Console.WriteLine($"[⚡✳️ EFFECT]: {description}");
     }
 }

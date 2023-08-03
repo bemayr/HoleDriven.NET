@@ -1,16 +1,21 @@
-﻿using HoleDriven.Core;
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
-namespace Holedriven
+namespace HoleDriven
 {
     public static partial class Hole
     {
         [DebuggerHidden]
-        public static void Throw(string description)
+        public static void Throw(
+            string description,
+            [CallerFilePath] string callerFilePath = null,
+            [CallerLineNumber] int callerLineNumber = int.MinValue,
+            [CallerMemberName] string callerMemberName = null)
         {
-            ReportHole(nameof(Throw), description);
-            throw new HoleNotFilledException(description);
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHole(description, location);
+            Hole.Idea("🔴 maybe report Throw, Refactor and Idea as well");
+            throw new Core.HoleNotFilledException(description);
         }
     }
 }

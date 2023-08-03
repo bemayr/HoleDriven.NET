@@ -20,9 +20,11 @@ namespace HoleDriven.Analyzers
 
         private static LocalizableString GetResourceString(string name) => new LocalizableResourceString(name, Resources.ResourceManager, typeof(Resources));
 
+        private const string HoleMessageFormat = "🧩 {0}";
+
         public static class Rules
         {
-            public static readonly DiagnosticDescriptor Get = new DiagnosticDescriptor(
+            public static readonly DiagnosticDescriptor Refactor = new DiagnosticDescriptor(
                 id: "HD0001",
                 title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
                 messageFormat: MessageFormat,
@@ -31,7 +33,7 @@ namespace HoleDriven.Analyzers
                 isEnabledByDefault: true,
                 description: Description);
 
-            public static readonly DiagnosticDescriptor Refactor = new DiagnosticDescriptor(
+            public static readonly DiagnosticDescriptor Idea = new DiagnosticDescriptor(
                 id: "HD0002",
                 title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
                 messageFormat: MessageFormat,
@@ -40,25 +42,26 @@ namespace HoleDriven.Analyzers
                 isEnabledByDefault: true,
                 description: Description);
 
-            public static readonly DiagnosticDescriptor Set = new DiagnosticDescriptor(
+            public static readonly DiagnosticDescriptor Effect = new(
                 id: "HD0003",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
+                title: "Effect Analyzer Title (where does this show?)",
+                messageFormat: HoleMessageFormat,
+                category: "Effect Category (where does this show?)",
+                defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                description: Description);
+                description: "Effect Description (where does this show?)",
+                helpLinkUri: "https://github.com/bemayr/HoleDriven.NET");
 
-            public static readonly DiagnosticDescriptor SetAsync = new DiagnosticDescriptor(
+            public static readonly DiagnosticDescriptor EffectAsync = new DiagnosticDescriptor(
                 id: "HD0004",
                 title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
                 messageFormat: MessageFormat,
                 category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
+                defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
                 description: Description);
 
-            public static readonly DiagnosticDescriptor Throw = new DiagnosticDescriptor(
+            public static readonly DiagnosticDescriptor Provide = new DiagnosticDescriptor(
                 id: "HD0005",
                 title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
                 messageFormat: MessageFormat,
@@ -67,8 +70,17 @@ namespace HoleDriven.Analyzers
                 isEnabledByDefault: true,
                 description: Description);
 
-            public static readonly DiagnosticDescriptor Idea = new DiagnosticDescriptor(
+            public static readonly DiagnosticDescriptor ProvideAsync = new DiagnosticDescriptor(
                 id: "HD0006",
+                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
+                messageFormat: MessageFormat,
+                category: Category,
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                description: Description);
+
+            public static readonly DiagnosticDescriptor Throw = new DiagnosticDescriptor(
+                id: "HD0007",
                 title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
                 messageFormat: MessageFormat,
                 category: Category,
@@ -77,7 +89,14 @@ namespace HoleDriven.Analyzers
                 description: Description);
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rules.Get, Rules.Set, Rules.SetAsync, Rules.Throw, Rules.Idea, Rules.Refactor); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            Rules.Refactor,
+            Rules.Idea,
+            Rules.Effect,
+            Rules.EffectAsync,
+            Rules.Provide,
+            Rules.ProvideAsync,
+            Rules.Throw);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -87,7 +106,7 @@ namespace HoleDriven.Analyzers
             // register the analyzer only if Holes are in use
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                if (compilationContext.Compilation.GetTypeByMetadataName("Holedriven.Hole") is null)
+                if (compilationContext.Compilation.GetTypeByMetadataName("HoleDriven.Hole") is null)
                     return;
 
                 // get the current optimization level to properly report the Holes
@@ -111,7 +130,7 @@ namespace HoleDriven.Analyzers
                 return; // we are not dealing with a Hole expression
 
             var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol as IMethodSymbol;
-            if (!methodSymbol?.ToString().StartsWith("Holedriven.Hole") ?? true)
+            if (!methodSymbol?.ToString().StartsWith("HoleDriven.Hole") ?? true)
                 return; // the Hole we detected did not originate from the Holedriven library
 
             var argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
@@ -132,12 +151,13 @@ namespace HoleDriven.Analyzers
 
             var diagnosticDescriptor = methodSymbol.Name switch
             {
-                nameof(Rules.Get) => Rules.Get,
-                nameof(Rules.Set) => Rules.Set,
-                nameof(Rules.SetAsync) => Rules.Set,
-                nameof(Rules.Throw) => Rules.Throw,
-                nameof(Rules.Idea) => Rules.Idea,
                 nameof(Rules.Refactor) => Rules.Refactor,
+                nameof(Rules.Idea) => Rules.Idea,
+                nameof(Rules.Effect) => Rules.Effect,
+                nameof(Rules.EffectAsync) => Rules.EffectAsync,
+                nameof(Rules.Provide) => Rules.Provide,
+                nameof(Rules.ProvideAsync) => Rules.Provide,
+                nameof(Rules.Throw) => Rules.Throw,
                 _ => null,
             };
             var severity = optimizationLevel switch

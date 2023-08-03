@@ -2,21 +2,16 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Holedriven
+namespace HoleDriven
 {
     public static partial class Hole
     {
-        public interface ISetAsyncResult
-        {
-            Task Task { get; }
-        }
-
-        public class SetAsyncResultCompleted : ISetAsyncResult
+        internal class SetAsyncResultCompleted : Core.IEffectAsyncResult
         {
             public Task Task => Task.CompletedTask;
         }
 
-        public delegate ISetAsyncResult SetAsyncResultProvider(string a);
+        public delegate Core.IEffectAsyncResult SetAsyncResultProvider(string a);
 
         public static Task EffectAsync(
             string description,
@@ -27,8 +22,15 @@ namespace Holedriven
         {
             resultProvider = resultProvider ?? (_ => new SetAsyncResultCompleted());
 
-            ReportHole(nameof(EffectAsync), $"{description} ({new { callerFilePath, callerLineNumber, callerMemberName }})");
-            return resultProvider("what the fuck does this string do").Task; // TODO: replace with a hole and check whether this is needed
+            ReportHole(description, new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName));
+            ReportEffectAsyncHappened(description);
+
+            return Hole.Refactor(
+                description: "🔴 check whether this is needed and what it does",
+                () => resultProvider("what the fuck does this string do").Task);
         }
+
+        internal static void ReportEffectAsyncHappened(string description) =>
+            Console.WriteLine($"[⚡✳️ EFFECT.ASYNC]: {description}");
     }
 }

@@ -1,8 +1,8 @@
-﻿using Holedriven;
+﻿using HoleDriven;
 
 namespace HoleDriven.Analyzers.Tests.TestData
 {
-    public class Get
+    public class Provide_Int
     {
         public static int Number => /*{|ExpectedDiagnosticLocation:*/Hole.Provide("/*description*/", 42)/*|}*/;
     }

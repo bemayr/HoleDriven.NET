@@ -1,23 +1,32 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
-namespace Holedriven
+namespace HoleDriven
 {
     public static partial class Hole
     {
         public static void Refactor(
             string description,
-            Expression<Action> expression)
+            Expression<Action> expression,
+            [CallerFilePath] string callerFilePath = null,
+            [CallerLineNumber] int callerLineNumber = int.MinValue,
+            [CallerMemberName] string callerMemberName = null)
         {
-            ReportHole(nameof(Refactor), description);
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHole(description, location);
             expression.Compile()();
         }
 
         public static T Refactor<T>(
             string description,
-            Expression<Func<T>> expression)
+            Expression<Func<T>> expression,
+            [CallerFilePath] string callerFilePath = null,
+            [CallerLineNumber] int callerLineNumber = int.MinValue,
+            [CallerMemberName] string callerMemberName = null)
         {
-            ReportHole(nameof(Refactor), description);
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHole(description, location);
             return expression.Compile()();
         }
     }

@@ -1,8 +1,8 @@
-﻿using Holedriven;
+﻿using HoleDriven;
 
 namespace HoleDriven.Analyzers.Tests.TestData
 {
-    public class Set
+    public class Effect
     {
         public static void Print()
         {
