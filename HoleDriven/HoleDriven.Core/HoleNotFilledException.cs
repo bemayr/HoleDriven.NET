@@ -11,6 +11,7 @@ namespace HoleDriven.Core
         {
             get
             {
+                // using string manipulation, because new `StackTrace(this).ToString()` does not include locations in source code
                 int endOfFirstLine = base.StackTrace.IndexOf(Environment.NewLine);
                 return base.StackTrace.Substring(endOfFirstLine + 1);
             }
