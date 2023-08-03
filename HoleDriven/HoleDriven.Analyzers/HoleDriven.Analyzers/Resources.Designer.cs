@@ -61,29 +61,65 @@ namespace HoleDriven.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type names should be all uppercase. 🕳️.
+        ///   Looks up a localized string similar to Hole signaling an asynchronous Effect.
         /// </summary>
-        internal static string HoleAnalyzerDescription {
+        internal static string EffectAsyncHoleAnalyzerTitle {
             get {
-                return ResourceManager.GetString("HoleAnalyzerDescription", resourceCulture);
+                return ResourceManager.GetString("EffectAsyncHoleAnalyzerTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🕳️🧩 &apos;{0}&apos;.
+        ///   Looks up a localized string similar to Hole signaling an Effect.
         /// </summary>
-        internal static string HoleAnalyzerMessageFormat {
+        internal static string EffectHoleAnalyzerTitle {
             get {
-                return ResourceManager.GetString("HoleAnalyzerMessageFormat", resourceCulture);
+                return ResourceManager.GetString("EffectHoleAnalyzerTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type name contains lowercase letters.
+        ///   Looks up a localized string similar to Hole signaling an Idea.
         /// </summary>
-        internal static string HoleAnalyzerTitle {
+        internal static string IdeaHoleAnalyzerTitle {
             get {
-                return ResourceManager.GetString("HoleAnalyzerTitle", resourceCulture);
+                return ResourceManager.GetString("IdeaHoleAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hole signaling an asynchronously provided Value.
+        /// </summary>
+        internal static string ProvideAsyncHoleAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("ProvideAsyncHoleAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hole signaling a provided Value.
+        /// </summary>
+        internal static string ProvideHoleAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("ProvideHoleAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hole signaling a needed Refactoring.
+        /// </summary>
+        internal static string RefactorHoleAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("RefactorHoleAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hole that signals missing implementation that throws.
+        /// </summary>
+        internal static string ThrowHoleAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("ThrowHoleAnalyzerTitle", resourceCulture);
             }
         }
     }

@@ -10,93 +10,33 @@ namespace HoleDriven.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class HoleAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "Hole.Get";
-
-        // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
-        // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md for more on localization
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.HoleAnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.HoleAnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-        private const string Category = "Holes";
-
-        private static LocalizableString GetResourceString(string name) => new LocalizableResourceString(name, Resources.ResourceManager, typeof(Resources));
-
-        private const string HoleMessageFormat = "🧩 {0}";
-
-        public static class Rules
+        private static DiagnosticDescriptor CreateHoleDignosticDescriptor(int id, string holeName) => new(
+            id: $"HD{id.ToString().PadLeft(4, '0')}",
+            title: new LocalizableResourceString($"{holeName}HoleAnalyzerTitle", Resources.ResourceManager, typeof(Resources)),
+            messageFormat: "🧩 {0}",
+            category: "Hole",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true,
+            helpLinkUri: $"https://holedriven.net/hole/{holeName.ToLowerInvariant()}");
+        public static class Diagnostic
         {
-            public static readonly DiagnosticDescriptor Refactor = new DiagnosticDescriptor(
-                id: "HD0001",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
-                isEnabledByDefault: true,
-                description: Description);
-
-            public static readonly DiagnosticDescriptor Idea = new DiagnosticDescriptor(
-                id: "HD0002",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
-                isEnabledByDefault: true,
-                description: Description);
-
-            public static readonly DiagnosticDescriptor Effect = new(
-                id: "HD0003",
-                title: "Effect Analyzer Title (where does this show?)",
-                messageFormat: HoleMessageFormat,
-                category: "Effect Category (where does this show?)",
-                defaultSeverity: DiagnosticSeverity.Error,
-                isEnabledByDefault: true,
-                description: "Effect Description (where does this show?)",
-                helpLinkUri: "https://github.com/bemayr/HoleDriven.NET");
-
-            public static readonly DiagnosticDescriptor EffectAsync = new DiagnosticDescriptor(
-                id: "HD0004",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Error,
-                isEnabledByDefault: true,
-                description: Description);
-
-            public static readonly DiagnosticDescriptor Provide = new DiagnosticDescriptor(
-                id: "HD0005",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
-                isEnabledByDefault: true,
-                description: Description);
-
-            public static readonly DiagnosticDescriptor ProvideAsync = new DiagnosticDescriptor(
-                id: "HD0006",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
-                isEnabledByDefault: true,
-                description: Description);
-
-            public static readonly DiagnosticDescriptor Throw = new DiagnosticDescriptor(
-                id: "HD0007",
-                title: GetResourceString(nameof(Resources.HoleAnalyzerTitle)),
-                messageFormat: MessageFormat,
-                category: Category,
-                defaultSeverity: DiagnosticSeverity.Warning,
-                isEnabledByDefault: true,
-                description: Description);
+            public static readonly DiagnosticDescriptor Refactor = CreateHoleDignosticDescriptor(1, nameof(Refactor));
+            public static readonly DiagnosticDescriptor Idea = CreateHoleDignosticDescriptor(2, nameof(Idea));
+            public static readonly DiagnosticDescriptor Effect = CreateHoleDignosticDescriptor(3, nameof(Effect));
+            public static readonly DiagnosticDescriptor EffectAsync = CreateHoleDignosticDescriptor(4, nameof(EffectAsync));
+            public static readonly DiagnosticDescriptor Provide = CreateHoleDignosticDescriptor(5, nameof(Provide));
+            public static readonly DiagnosticDescriptor ProvideAsync = CreateHoleDignosticDescriptor(6, nameof(ProvideAsync));
+            public static readonly DiagnosticDescriptor Throw = CreateHoleDignosticDescriptor(7, nameof(Throw));
         }
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
-            Rules.Refactor,
-            Rules.Idea,
-            Rules.Effect,
-            Rules.EffectAsync,
-            Rules.Provide,
-            Rules.ProvideAsync,
-            Rules.Throw);
+            Diagnostic.Refactor,
+            Diagnostic.Idea,
+            Diagnostic.Effect,
+            Diagnostic.EffectAsync,
+            Diagnostic.Provide,
+            Diagnostic.ProvideAsync,
+            Diagnostic.Throw);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -151,13 +91,13 @@ namespace HoleDriven.Analyzers
 
             var diagnosticDescriptor = methodSymbol.Name switch
             {
-                nameof(Rules.Refactor) => Rules.Refactor,
-                nameof(Rules.Idea) => Rules.Idea,
-                nameof(Rules.Effect) => Rules.Effect,
-                nameof(Rules.EffectAsync) => Rules.EffectAsync,
-                nameof(Rules.Provide) => Rules.Provide,
-                nameof(Rules.ProvideAsync) => Rules.Provide,
-                nameof(Rules.Throw) => Rules.Throw,
+                nameof(Diagnostic.Refactor) => Diagnostic.Refactor,
+                nameof(Diagnostic.Idea) => Diagnostic.Idea,
+                nameof(Diagnostic.Effect) => Diagnostic.Effect,
+                nameof(Diagnostic.EffectAsync) => Diagnostic.EffectAsync,
+                nameof(Diagnostic.Provide) => Diagnostic.Provide,
+                nameof(Diagnostic.ProvideAsync) => Diagnostic.Provide,
+                nameof(Diagnostic.Throw) => Diagnostic.Throw,
                 _ => null,
             };
             var severity = optimizationLevel switch
@@ -167,14 +107,35 @@ namespace HoleDriven.Analyzers
                 _ => throw new System.Exception($"Unknown OptimizationLevel: {optimizationLevel}"),
             };
 
-            var diagnostic = Diagnostic.Create(
-                descriptor: diagnosticDescriptor,
-                location: invocationExpression.GetLocation(),
-                effectiveSeverity: severity,
-                additionalLocations: null,
-                properties: null,
-                description);
-            context.ReportDiagnostic(diagnostic);
+            if (diagnosticDescriptor.Id == Diagnostic.Refactor.Id)
+            {
+                var diagnostic = Microsoft.CodeAnalysis.Diagnostic.Create(
+                    id: Diagnostic.Refactor.Id,
+                    category: Diagnostic.Refactor.Category,
+                    message: string.Format(Diagnostic.Refactor.MessageFormat.ToString(), description),
+                    severity,
+                    defaultSeverity: Diagnostic.Refactor.DefaultSeverity,
+                    isEnabledByDefault: Diagnostic.Refactor.IsEnabledByDefault,
+                    warningLevel: severity == DiagnosticSeverity.Error ? 0 : 1, /// <see cref="Diagnostic.WarningLevel"/> Gets the warning level. This is 0 for diagnostics with severity Microsoft.CodeAnalysis.DiagnosticSeverity.Error, otherwise an integer between 1 and 4.
+                    title: Diagnostic.Refactor.Title,
+                    description: "this is some description that would otherwise not be available",
+                    helpLink: Diagnostic.Refactor.HelpLinkUri,
+                    location: invocationExpression.GetLocation());
+
+                context.ReportDiagnostic(diagnostic);
+            }
+            else
+            {
+                var diagnostic = Microsoft.CodeAnalysis.Diagnostic.Create(
+                    descriptor: diagnosticDescriptor,
+                    location: invocationExpression.GetLocation(),
+                    effectiveSeverity: severity,
+                    additionalLocations: null,
+                    properties: null,
+                    description);
+
+                context.ReportDiagnostic(diagnostic);
+            }
         }
     }
 }

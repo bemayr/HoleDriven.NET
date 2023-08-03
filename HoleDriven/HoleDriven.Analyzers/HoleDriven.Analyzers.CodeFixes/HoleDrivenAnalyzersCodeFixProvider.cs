@@ -17,7 +17,7 @@ namespace HoleDriven.Analyzers
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(HoleAnalyzer.DiagnosticId); }
+            get { return ImmutableArray.Create("TODO: this should break catastrophically"); }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()

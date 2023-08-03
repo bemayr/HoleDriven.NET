@@ -65,7 +65,7 @@ namespace HoleDriven.Analyzers.Tests
         [Theory]
         [Trait("Category", "Engine")]
         [MemberData(nameof(GetSourceFiles))]
-        public async Task Holes_are_Reported_as_Info_in_Debug_Mode(HoleAnalyzerTestInput input)
+        public async Task Holes_gets_Reported_DEBUG(HoleAnalyzerTestInput input)
         {
             // Arrange
             var expectedDiagnosticDescriptor = Data.GetDiagnosticDescriptor(input.ExpectedDiagnostic);
@@ -86,7 +86,7 @@ namespace HoleDriven.Analyzers.Tests
         [Theory]
         [Trait("Category", "Engine")]
         [MemberData(nameof(GetSourceFiles))]
-        public async Task Holes_are_Reported_as_Error_in_Release_Mode(HoleAnalyzerTestInput input)
+        public async Task Holes_gets_Reported_RELEASE(HoleAnalyzerTestInput input)
         {
             // Arrange
             var expectedDiagnosticDescriptor = Data.GetDiagnosticDescriptor(input.ExpectedDiagnostic);
@@ -166,13 +166,13 @@ namespace HoleDriven.Analyzers.Tests
 
         public static DiagnosticDescriptor GetDiagnosticDescriptor(string methodName) => methodName switch
         {
-            nameof(Hole.Refactor) => HoleAnalyzer.Rules.Refactor,
-            nameof(Hole.Idea) => HoleAnalyzer.Rules.Idea,
-            nameof(Hole.Effect) => HoleAnalyzer.Rules.Effect,
-            nameof(Hole.EffectAsync) => HoleAnalyzer.Rules.EffectAsync,
-            nameof(Hole.Provide) => HoleAnalyzer.Rules.Provide,
-            nameof(Hole.ProvideAsync) => HoleAnalyzer.Rules.ProvideAsync,
-            nameof(Hole.Throw) => HoleAnalyzer.Rules.Throw,
+            nameof(Hole.Refactor) => HoleAnalyzer.Diagnostic.Refactor,
+            nameof(Hole.Idea) => HoleAnalyzer.Diagnostic.Idea,
+            nameof(Hole.Effect) => HoleAnalyzer.Diagnostic.Effect,
+            nameof(Hole.EffectAsync) => HoleAnalyzer.Diagnostic.EffectAsync,
+            nameof(Hole.Provide) => HoleAnalyzer.Diagnostic.Provide,
+            nameof(Hole.ProvideAsync) => HoleAnalyzer.Diagnostic.ProvideAsync,
+            nameof(Hole.Throw) => HoleAnalyzer.Diagnostic.Throw,
             _ => throw new NotImplementedException($"no Analyzer available for this {methodName}")
         };
     }

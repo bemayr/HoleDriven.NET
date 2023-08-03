@@ -117,16 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="HoleAnalyzerDescription" xml:space="preserve">
-    <value>Type names should be all uppercase. 🕳️</value>
-    <comment>An optional longer localizable description of the diagnostic.</comment>
+  <data name="EffectAsyncHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole signaling an asynchronous Effect</value>
+    <comment>The title of the EffectAsync diagnostic.</comment>
   </data>
-  <data name="HoleAnalyzerMessageFormat" xml:space="preserve">
-    <value>🕳️🧩 '{0}'</value>
-    <comment>The format-able message the diagnostic displays.</comment>
+  <data name="EffectHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole signaling an Effect</value>
+    <comment>The title of the Effect diagnostic.</comment>
   </data>
-  <data name="HoleAnalyzerTitle" xml:space="preserve">
-    <value>Type name contains lowercase letters</value>
-    <comment>The title of the diagnostic.</comment>
+  <data name="IdeaHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole signaling an Idea</value>
+    <comment>The title of the Idea diagnostic.</comment>
+  </data>
+  <data name="ProvideAsyncHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole signaling an asynchronously provided Value</value>
+    <comment>The title of the ProvideAsync diagnostic.</comment>
+  </data>
+  <data name="ProvideHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole signaling a provided Value</value>
+    <comment>The title of the Provide diagnostic.</comment>
+  </data>
+  <data name="RefactorHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole signaling a needed Refactoring</value>
+    <comment>The title of the Refactor diagnostic.</comment>
+  </data>
+  <data name="ThrowHoleAnalyzerTitle" xml:space="preserve">
+    <value>Hole that signals missing implementation that throws</value>
+    <comment>The title of the Throw diagnostic.</comment>
   </data>
 </root>
