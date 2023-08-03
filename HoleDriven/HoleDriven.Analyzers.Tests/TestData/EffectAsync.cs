@@ -7,7 +7,7 @@ namespace HoleDriven.Analyzers.Tests.TestData
     {
         public static async Task PrintAsync()
         {
-            /*{|ExpectedDiagnosticLocation:*/await Hole.EffectAsync("/*description*/")/*|}*/;
+            await /*{|ExpectedDiagnosticLocation:*/Hole.EffectAsync("/*description*/")/*|}*/;
         }
     }
 }
