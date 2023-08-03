@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Analyzers.Tests", "HoleDriven.Analyzers.Tests\HoleDriven.Analyzers.Tests.csproj", "{52721289-887B-4470-8E7E-F24E82B58898}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{5511FC27-2A87-4993-9A18-DB849CE20CFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Extension.PrettyConsoleReporters", "HoleDriven.Extension.PrettyConsoleReporters\HoleDriven.Extension.PrettyConsoleReporters.csproj", "{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,10 @@ Global
 		{52721289-887B-4470-8E7E-F24E82B58898}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52721289-887B-4470-8E7E-F24E82B58898}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52721289-887B-4470-8E7E-F24E82B58898}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +77,7 @@ Global
 		{A4673626-FED2-4273-8CE9-00927A70D75C} = {BACFFADC-D79C-47D5-83D5-A4FB08069593}
 		{628F6F18-7C18-45BC-8B41-214F73214002} = {BACFFADC-D79C-47D5-83D5-A4FB08069593}
 		{52721289-887B-4470-8E7E-F24E82B58898} = {BACFFADC-D79C-47D5-83D5-A4FB08069593}
+		{D867D31D-6EE3-4BE0-8645-3B08F625DB8C} = {5511FC27-2A87-4993-9A18-DB849CE20CFB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A322560A-D946-4618-9F01-EBA9CDBBD5A3}

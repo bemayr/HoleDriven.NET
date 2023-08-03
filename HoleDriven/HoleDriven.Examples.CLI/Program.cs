@@ -1,15 +1,18 @@
 ﻿using HoleDriven;
 using HoleDriven.Core;
 using System.Text;
+using Spectre.Console;
 
 // enable Emoji support in Console
 Console.OutputEncoding = Encoding.UTF8;
 
-//HoleDriven.Configuration.ClearDefaults();
 HoleDriven.Configuration.RemoveDefaultHoleEncounteredReporter();
+HoleDriven.Configuration.RemoveDefaultEffectHappenedReporter();
 HoleDriven.Configuration.EffectHappenedReporter += (description, location) =>
 {
-    Console.WriteLine(description);
+    var fileName = Path.GetFileName(location.FilePath);
+    var formattedLocation = $"{location.CallerMemberName} in {fileName}:line {location.LineNumber}";
+    AnsiConsole.MarkupLine($"🧩 [bold invert turquoise2][[EFFECT 🥏]][/]: [italic]{description}[/] [dim](at {formattedLocation})[/]");
 };
 
 // This is an example of an application that uses all possible Holes
@@ -24,7 +27,7 @@ var pi = Hole.Refactor(
     () => 3.1415);
 Hole.Refactor(
     "we can also mark some statement in a way that it needs refactoring, e.g. that the following secure PIN should be printed as ****",
-    () => Console.WriteLine("Pin Code: 0000"));
+    () => AnsiConsole.WriteLine("Pin Code: 0000"));
 Hole.Idea("Or if we just have an idea on how to improve something, we can jot it down and it applies to the nearest scope");
 
 namespace AttributeExample

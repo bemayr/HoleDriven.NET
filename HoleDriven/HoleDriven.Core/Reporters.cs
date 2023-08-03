@@ -32,9 +32,9 @@ namespace HoleDriven
             public static void ProvideHappened(string description, object value, Core.HoleLocation location) =>
                 Console.WriteLine($"[📤 PROVIDE]: Value provided: '{value}' (at {Core.Utilities.FormatLocation(location)})");
             public static void ProvideAsyncStarted(string description, Guid id, Task task, Core.HoleLocation location) =>
-                Console.WriteLine($"[🥏 PROVIDE.ASYNC] Started({id}) (at {Core.Utilities.FormatLocation(location)})");
+                Console.WriteLine($"[📤 PROVIDE.ASYNC] Started({id}) (at {Core.Utilities.FormatLocation(location)})");
             public static void ProvideAsyncCompleted(string description, object value, Guid id, Task task, Core.HoleLocation location) =>
-                Console.WriteLine($"[🥏 PROVIDE.ASYNC] Completed({id}, {task.Status}) with value '{value}' (at {Core.Utilities.FormatLocation(location)})");
+                Console.WriteLine($"[📤 PROVIDE.ASYNC] Completed({id}, {task.Status}) with value '{value}' (at {Core.Utilities.FormatLocation(location)})");
             public static void ThrowHappened(string description, Core.HoleNotFilledException exception, Core.HoleLocation location) =>
                 Console.WriteLine($"[💣 THROW]: {description} (at {Core.Utilities.FormatLocation(location)})");
         }
