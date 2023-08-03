@@ -13,8 +13,8 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHole(description, location);
-            Hole.Idea("🔴 maybe report Throw, Refactor and Idea as well");
+            Configuration.ReportHoleEncountered(description, location);
+            
             throw new Core.HoleNotFilledException(description);
         }
     }

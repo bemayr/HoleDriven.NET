@@ -13,7 +13,7 @@ namespace HoleDriven
 
         public delegate Core.IEffectAsyncResult SetAsyncResultProvider(string a);
 
-        public static Task EffectAsync(
+        public static async Task EffectAsync(
             string description,
             SetAsyncResultProvider resultProvider = null,
             [CallerFilePath] string callerFilePath = null,
@@ -22,15 +22,16 @@ namespace HoleDriven
         {
             resultProvider = resultProvider ?? (_ => new SetAsyncResultCompleted());
 
-            ReportHole(description, new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName));
-            ReportEffectAsyncHappened(description);
-
-            return Hole.Refactor(
+            var id = Guid.NewGuid();
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var task = Hole.Refactor(
                 description: "🔴 check whether this is needed and what it does",
                 () => resultProvider("what the fuck does this string do").Task);
-        }
 
-        internal static void ReportEffectAsyncHappened(string description) =>
-            Console.WriteLine($"[⚡✳️ EFFECT.ASYNC]: {description}");
+            Configuration.ReportHoleEncountered(description, location);
+            Configuration.ReportEffectAsyncStarted(description, id, task, location);
+            await task;
+            Configuration.ReportEffectAsyncCompleted(description, id, task, location);
+        }
     }
 }

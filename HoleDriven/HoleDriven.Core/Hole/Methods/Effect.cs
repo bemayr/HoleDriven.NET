@@ -11,11 +11,9 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            ReportHole(description, new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName));
-            ReportEffectHappened(description);
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            Configuration.ReportHoleEncountered(description, location);
+            Configuration.ReportEffectHappened(description, location);
         }
-
-        internal static void ReportEffectHappened(string description) =>
-            Console.WriteLine($"[⚡✳️ EFFECT]: {description}");
     }
 }

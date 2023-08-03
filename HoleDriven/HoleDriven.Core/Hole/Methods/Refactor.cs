@@ -8,13 +8,13 @@ namespace HoleDriven
     {
         public static void Refactor(
             string description,
-            Expression<Action> expression,
+            Expression<Action> expression, // TODO: maybe capture the expression via Caller...
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHole(description, location);
+            Configuration.ReportHoleEncountered(description, location);
             expression.Compile()();
         }
 
@@ -26,7 +26,7 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHole(description, location);
+            Configuration.ReportHoleEncountered(description, location);
             return expression.Compile()();
         }
     }

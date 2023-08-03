@@ -13,14 +13,9 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHole(description, location);
-            ReportProvideHappened(value, location);
+            Configuration.ReportHoleEncountered(description, location);
+            Configuration.ReportProvideHappened(description, value, location);
             return value;
         }
-
-        internal static void ReportProvideHappened(object value, Core.HoleLocation location) =>
-            Hole.Refactor(
-                "🔴 make this configurable",
-                () => Console.WriteLine($"[✨🎁🧧📦✉️📤🪄🔮💉 PROVIDE]: Value provided: '{value}'"));
     }
 }

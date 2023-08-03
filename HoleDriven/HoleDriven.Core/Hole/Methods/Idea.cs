@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using HoleDriven.Core;
 
 namespace HoleDriven
 {
@@ -13,7 +12,8 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            ReportHole(description, new HoleLocation(callerFilePath, callerLineNumber, callerMemberName));
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            Configuration.ReportHoleEncountered(description, location);
         }
     }
 
