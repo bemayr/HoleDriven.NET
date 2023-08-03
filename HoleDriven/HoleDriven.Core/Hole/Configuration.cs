@@ -27,17 +27,25 @@ namespace HoleDriven
             ThrowHappenedReporter = Defaults.Reporter.ThrowHappened;
         }
 
-        public static void ClearDefaults()
+        public static void RemoveDefaultReporters()
         {
-            HoleEncounteredReporter -= Defaults.Reporter.HoleEncountered;
-            EffectHappenedReporter -= Defaults.Reporter.EffectHappened;
-            EffectAsyncStartedReporter -= Defaults.Reporter.EffectAsyncStarted;
-            EffectAsyncCompletedReporter -= Defaults.Reporter.EffectAsyncCompleted;
-            ProvideHappenedReporter -= Defaults.Reporter.ProvideHappened;
-            ProvideAsyncStartedReporter -= Defaults.Reporter.ProvideAsyncStarted;
-            ProvideAsyncCompletedReporter -= Defaults.Reporter.ProvideAsyncCompleted;
-            ThrowHappenedReporter -= Defaults.Reporter.ThrowHappened;
+            RemoveDefaultHoleEncounteredReporter();
+            RemoveDefaultEffectHappenedReporter();
+            RemoveDefaultEffectAsyncStartedReporter();
+            RemoveDefaultEffectAsyncCompletedReporter();
+            RemoveDefaultProvideHappenedReporter();
+            RemoveDefaultProvideAsyncStartedReporter();
+            RemoveDefaultProvideAsyncCompletedReporter();
+            RemoveDefaultThrowHappenedReporter();
         }
+        public static void RemoveDefaultHoleEncounteredReporter() => HoleEncounteredReporter -= Defaults.Reporter.HoleEncountered;
+        public static void RemoveDefaultEffectHappenedReporter() => EffectHappenedReporter -= Defaults.Reporter.EffectHappened;
+        public static void RemoveDefaultEffectAsyncStartedReporter() => EffectAsyncStartedReporter -= Defaults.Reporter.EffectAsyncStarted;
+        public static void RemoveDefaultEffectAsyncCompletedReporter() => EffectAsyncCompletedReporter -= Defaults.Reporter.EffectAsyncCompleted;
+        public static void RemoveDefaultProvideHappenedReporter() => ProvideHappenedReporter -= Defaults.Reporter.ProvideHappened;
+        public static void RemoveDefaultProvideAsyncStartedReporter() => ProvideAsyncStartedReporter -= Defaults.Reporter.ProvideAsyncStarted;
+        public static void RemoveDefaultProvideAsyncCompletedReporter() => ProvideAsyncCompletedReporter -= Defaults.Reporter.ProvideAsyncCompleted;
+        public static void RemoveDefaultThrowHappenedReporter() => ThrowHappenedReporter -= Defaults.Reporter.ThrowHappened;
 
         internal static void ReportHoleEncountered(string description, Core.HoleLocation location, [CallerMemberName] string callerMemberName = null) =>
             HoleEncounteredReporter?.Invoke((Core.HoleType)Enum.Parse(typeof(Core.HoleType), callerMemberName), description, location);
