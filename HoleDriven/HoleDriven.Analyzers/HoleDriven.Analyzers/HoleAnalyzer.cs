@@ -81,7 +81,7 @@ namespace HoleDriven.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.EnableConcurrentExecution();
 
             // register the analyzer only if Holes are in use
@@ -90,16 +90,18 @@ namespace HoleDriven.Analyzers
                 if (compilationContext.Compilation.GetTypeByMetadataName("Holedriven.Hole") is null)
                     return;
 
-                var compilation = compilationContext.Compilation;
-                Console.WriteLine(compilation.Options.Platform);
-                Console.WriteLine(compilation.Options.WarningLevel);
-                Console.WriteLine(compilation.Options.OptimizationLevel);
+                // get the current optimization level to properly report the Holes
+                var optimizationLevel = compilationContext.Compilation.Options.OptimizationLevel;
 
-                compilationContext.RegisterSyntaxNodeAction(AnalyzeHole, SyntaxKind.InvocationExpression);
+                Console.WriteLine(optimizationLevel);
+
+                compilationContext.RegisterSyntaxNodeAction(
+                    context => AnalyzeHoles(context, optimizationLevel),
+                    SyntaxKind.InvocationExpression);
             });
         }
 
-        private static void AnalyzeHole(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeHoles(SyntaxNodeAnalysisContext context, OptimizationLevel optimizationLevel)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node; // Hole.<...>(<...>)
             var memberAccessExpression = invocationExpression.Expression as MemberAccessExpressionSyntax; // Hole.< ...>
@@ -138,29 +140,21 @@ namespace HoleDriven.Analyzers
                 nameof(Rules.Refactor) => Rules.Refactor,
                 _ => null,
             };
-
-            var mode = "";
-            if (diagnosticDescriptor is not null)
+            var severity = optimizationLevel switch
             {
-#if DEBUG
-                Console.WriteLine("Mode = Debug");
-                mode = "Debug";
-#else
-                Console.WriteLine("Mode = Release"); 
-                mode = "Release";
-#endif
+                OptimizationLevel.Release => DiagnosticSeverity.Error,
+                OptimizationLevel.Debug => DiagnosticSeverity.Info,
+                _ => throw new System.Exception($"Unknown OptimizationLevel: {optimizationLevel}"),
+            };
 
-#if HELLO
-                Console.WriteLine("HELLO = yes :)");
-#else
-                Console.WriteLine("HELLO = no :(");
-#endif
-
-
-                var location = invocationExpression.GetLocation();
-                var diagnostic = Diagnostic.Create(diagnosticDescriptor, location, description + $" ({mode})");
-                context.ReportDiagnostic(diagnostic);
-            }
+            var diagnostic = Diagnostic.Create(
+                descriptor: diagnosticDescriptor,
+                location: invocationExpression.GetLocation(),
+                effectiveSeverity: severity,
+                additionalLocations: null,
+                properties: null,
+                description);
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }

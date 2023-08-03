@@ -94,13 +94,13 @@ namespace HoleDriven.Analyzers.Test
                     {
                         new DiagnosticResult(HoleAnalyzer.Rules.Set)
                             .WithLocation(1)
-                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithSeverity(DiagnosticSeverity.Info)
                             .WithArguments(description),
                         new DiagnosticResult(HoleAnalyzer.Rules.Get)
                             .WithLocation(2)
-                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithSeverity(DiagnosticSeverity.Info)
                             .WithArguments("adfasdf")
-                    }
+                    },
                 },
             };
 
@@ -110,6 +110,12 @@ namespace HoleDriven.Analyzers.Test
                     new CSharpParseOptions()
                         .WithPreprocessorSymbols("DEBUG"));
             });
+
+            analyzerTest.SolutionTransforms.Add((solution, projectId) =>
+                solution.WithProjectCompilationOptions(
+                    projectId,
+                    new CSharpCompilationOptions(OutputKind.ConsoleApplication).WithOptimizationLevel(OptimizationLevel.Debug))
+            );
 
             await analyzerTest.RunAsync();
         }
@@ -151,11 +157,11 @@ namespace HoleDriven.Analyzers.Test
                     {
                         new DiagnosticResult(HoleAnalyzer.Rules.Set)
                             .WithLocation(1)
-                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithSeverity(DiagnosticSeverity.Error)
                             .WithArguments(description),
                         new DiagnosticResult(HoleAnalyzer.Rules.Get)
                             .WithLocation(2)
-                            .WithSeverity(DiagnosticSeverity.Warning)
+                            .WithSeverity(DiagnosticSeverity.Error)
                             .WithArguments("adfasdf")
                     }
                 },
