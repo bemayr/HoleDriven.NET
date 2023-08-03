@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Holedriven
 {
-    public partial class Hole
+    public static partial class Hole
     {
         public interface ISetAsyncResult
         {
@@ -18,7 +18,7 @@ namespace Holedriven
 
         public delegate ISetAsyncResult SetAsyncResultProvider(string a);
 
-        public static Task SetAsync(
+        public static Task EffectAsync(
             string description,
             SetAsyncResultProvider resultProvider = null,
             [CallerFilePath] string callerFilePath = null,
@@ -27,7 +27,7 @@ namespace Holedriven
         {
             resultProvider = resultProvider ?? (_ => new SetAsyncResultCompleted());
 
-            Console.WriteLine($"[🕳️]: {description} ({new { callerFilePath, callerLineNumber, callerMemberName }})");
+            ReportHole(nameof(EffectAsync), $"{description} ({new { callerFilePath, callerLineNumber, callerMemberName }})");
             return resultProvider("what the fuck does this string do").Task; // TODO: replace with a hole and check whether this is needed
         }
     }

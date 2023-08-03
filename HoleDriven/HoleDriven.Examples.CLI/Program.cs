@@ -1,35 +1,26 @@
 ﻿using Holedriven;
-using System.Linq.Expressions;
+using System.Text;
 
-//ExampleConventional();
-ExampleHoleDriven();
+// enable Emoji support in Console
+Console.OutputEncoding = Encoding.UTF8;
 
-static void ExampleConventional()
+// This is an example of an application that uses all possible Holes
+
+var simpleValue = Hole.Provide("we can simply provide a value and the type is inferred automatically", 42);
+var asyncValue = await Hole.ProvideAsync("we can also get a value asynchronously", Task.FromResult("HoleDriven.NET"));
+Hole.Effect("we can also signal that an effect should happen");
+await Hole.EffectAsync("this effect can also happen asynchronously");
+Hole.Throw("if we want to throw an exception upon encountering a Hole, we can simply use `Hole.Throw`");
+var pi = Hole.Refactor(
+    "we can also signal that something should be refactored, e.g. this literal should be replaced with a Math.PI",
+    () => 3.1415);
+Hole.Refactor(
+    "we can also mark some statement in a way that it needs refactoring, e.g. that the following secure PIN should be printed as ****",
+    () => Console.WriteLine("0000"));
+Hole.Idea("Or if we just have an idea on how to improve something, we can jot it down and it applies to the nearest scope");
+
+namespace AttributeExample
 {
-    Console.WriteLine("What is your Name?");
-    var name = Console.ReadLine();
-    Console.WriteLine($"Hello, {name}!");
+    [Hole.Idea("think of whether to include a direction in which we do not want to steer")]
+    public enum Direction { Left, Down, Up }
 }
-
-static void ExampleHoleDriven()
-{
-    Console.WriteLine("What is your Name?");
-    var name = Hole.Get("Read the name from the command line", "Bernhard");
-    Hole.Set("Write a greeting that greets the user");
-    //Hole.Refactor(() => Console.WriteLine($"Hello, {name}!"));
-
-    Hole.Throw("some bogus");
-}
-
-//static void HoleAPI()
-//{
-//    Hole.Get();
-//    Hole.Refactor();
-//    Hole.Set();
-//    Hole.SetAsync();
-//    Hole.Throw();
-//    Hole.Idea();
-//}
-
-Expression<Func<int>> myExpression = () => 10;
-Expression<Action> log = () => Console.WriteLine("test");

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HoleDriven.Analyzers\HoleDriven.Analyzers\HoleDriven.Analyzers.csproj"
+					  PrivateAssets="all"
+                      ReferenceOutputAssembly="false"
+                      OutputItemType="Analyzer"
+                      SetTargetFramework="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\HoleDriven.Core\HoleDriven.Core.csproj" />
   </ItemGroup>
 

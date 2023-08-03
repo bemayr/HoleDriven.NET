@@ -161,8 +161,8 @@ namespace HoleDriven.Analyzers.Tests
 
         public static DiagnosticDescriptor GetDiagnosticDescriptor(string methodName) => methodName switch
         {
-            nameof(Hole.Get) => HoleAnalyzer.Rules.Get,
-            nameof(Hole.Set) => HoleAnalyzer.Rules.Set,
+            nameof(Hole.Provide) => HoleAnalyzer.Rules.Get,
+            nameof(Hole.Effect) => HoleAnalyzer.Rules.Set,
             nameof(Hole.Throw) => HoleAnalyzer.Rules.Throw,
             nameof(Hole.Refactor) => HoleAnalyzer.Rules.Refactor,
             _ => throw new NotImplementedException($"no Analyzer available for this {methodName}")

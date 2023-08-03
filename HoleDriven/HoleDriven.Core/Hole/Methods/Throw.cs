@@ -1,14 +1,16 @@
-﻿using System;
+﻿using HoleDriven.Core;
+using System;
 using System.Diagnostics;
 
 namespace Holedriven
 {
-    public partial class Hole
+    public static partial class Hole
     {
         [DebuggerHidden]
         public static void Throw(string description)
         {
-            throw new NotImplementedException(description);
+            ReportHole(nameof(Throw), description);
+            throw new HoleNotFilledException(description);
         }
     }
 }

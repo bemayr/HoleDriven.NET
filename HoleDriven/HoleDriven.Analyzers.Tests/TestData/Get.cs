@@ -4,6 +4,6 @@ namespace HoleDriven.Analyzers.Tests.TestData
 {
     public class Get
     {
-        public static int Number => /*{|ExpectedDiagnosticLocation:*/Hole.Get("/*description*/", 42)/*|}*/;
+        public static int Number => /*{|ExpectedDiagnosticLocation:*/Hole.Provide("/*description*/", 42)/*|}*/;
     }
 }

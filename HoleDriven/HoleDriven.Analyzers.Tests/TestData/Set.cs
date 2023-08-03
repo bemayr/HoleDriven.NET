@@ -6,7 +6,7 @@ namespace HoleDriven.Analyzers.Tests.TestData
     {
         public static void Print()
         {
-            /*{|ExpectedDiagnosticLocation:*/Hole.Set("/*description*/")/*|}*/;
+            /*{|ExpectedDiagnosticLocation:*/Hole.Effect("/*description*/")/*|}*/;
         }
     }
 }

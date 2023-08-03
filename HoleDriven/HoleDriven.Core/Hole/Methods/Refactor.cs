@@ -3,18 +3,22 @@ using System.Linq.Expressions;
 
 namespace Holedriven
 {
-    public partial class Hole
+    public static partial class Hole
     {
-        public static void Refactor(Expression<Action> expression)
+        public static void Refactor(
+            string description,
+            Expression<Action> expression)
         {
-            var compiled = expression.Compile();
-            throw new NotImplementedException();
+            ReportHole(nameof(Refactor), description);
+            expression.Compile()();
         }
 
-        public static void Refactor<T>(Expression<Func<T>> expression)
+        public static T Refactor<T>(
+            string description,
+            Expression<Func<T>> expression)
         {
-            var compiled = expression.Compile();
-            throw new NotImplementedException();
+            ReportHole(nameof(Refactor), description);
+            return expression.Compile()();
         }
     }
 }
