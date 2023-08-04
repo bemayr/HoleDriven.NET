@@ -15,8 +15,8 @@ namespace HoleDriven
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
             var exception = new Core.HoleNotFilledException(description);
 
-            Configuration.ReportHoleEncountered(description, location);
-            Configuration.ReportThrowHappened(description, exception, location);
+            Report.HoleEncountered(description, location);
+            Report.ThrowHappened(description, exception, location);
             
             throw exception;
         }

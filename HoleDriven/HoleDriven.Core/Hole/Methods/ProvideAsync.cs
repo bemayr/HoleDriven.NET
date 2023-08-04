@@ -16,10 +16,10 @@ namespace HoleDriven
             var id = Guid.NewGuid();
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
 
-            Configuration.ReportHoleEncountered(description, location);
-            Configuration.ReportProvideAsyncStarted(description, id, task, location);
+            Report.HoleEncountered(description, location);
+            Report.ProvideAsyncStarted(description, id, task, location);
             var value = await task;
-            Configuration.ReportProvideAsyncCompleted(description, value, id, task, location);
+            Report.ProvideAsyncCompleted(description, value, id, task, location);
 
             return value;
         }

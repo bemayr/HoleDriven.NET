@@ -11,6 +11,8 @@ Console.OutputEncoding = Encoding.UTF8;
 // Customize Reporters
 //HoleDriven.Configuration.RemoveDefaultHoleEncounteredReporter();
 //HoleDriven.Configuration.RemoveDefaultEffectHappenedReporter();
+//HoleDriven.Configure.Reporters.RemoveDefaultEffectHappenedReporter();
+//HoleDriven.Configure.Reporters.EffectHappenedReporter += null;
 //HoleDriven.Configuration.EffectHappenedReporter += (description, location) =>
 //{
 //    var fileName = Path.GetFileName(location.FilePath);
@@ -18,21 +20,22 @@ Console.OutputEncoding = Encoding.UTF8;
 //    AnsiConsole.MarkupLine($"🧩 [bold invert turquoise2][[EFFECT 🥏]][/]: [italic]{description}[/] [dim](at {formattedLocation})[/]");
 //};
 
-HoleDriven.Configure.Reporters.RemoveDefaultEffectHappenedReporter();
-HoleDriven.Configure.Reporters.EffectHappenedReporter += null;
+Hole.Idea("split the examples into individual files and show their usage");
+
 HoleDriven.Configure.Extensions.ActivatePrettyConsoleReporters();
+HoleDriven.Configure.Reporters.RemoveDefaultHoleEncounteredReporter();
 
 await Hole.EffectAsync(
     "set the light bulb to flashing",
     task => task.ThatTakesAround(TimeSpan.FromSeconds(1))); // .AndSucceedsWithAProbabilityOf(85.0 / 100));
 
 var user = Hole.Provide(
-    "get some random user",
-    value => value.Fake<User>(faker => faker.RuleFor(o => o.FirstName, f => f.Name.FirstName()))); // Fake vs. Mock vs. ...
+    "get some random [red]user[/]",
+    value => value.Bogus<User>(f => f.RuleFor(o => o.FirstName, f => f.Name.FirstName()))); // Fake vs. Mock vs. ...
 
 var name = Hole.Provide(
     "ask the user to enter his/her real username",
-    value => value.Fake(faker => faker.Name.FirstName())); // Fake vs. Mock vs. ...
+    value => value.Bogus(f => f.Name.FirstName())); // Fake vs. Mock vs. ...
 
 
 // This is an example of an application that uses all possible Holes

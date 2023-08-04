@@ -37,10 +37,10 @@ namespace HoleDriven
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
             var task = resultProvider(new EffectAsyncInputTask(id)).Task;
 
-            Configuration.ReportHoleEncountered(description, location);
-            Configuration.ReportEffectAsyncStarted(description, id, task, location);
+            Report.HoleEncountered(description, location);
+            Report.EffectAsyncStarted(description, id, task, location);
             await task;
-            Configuration.ReportEffectAsyncCompleted(description, id, task, location);
+            Report.EffectAsyncCompleted(description, id, task, location);
         }
     }
 }

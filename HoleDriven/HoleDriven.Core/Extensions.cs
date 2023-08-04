@@ -4,7 +4,6 @@ using System.Text;
 
 namespace HoleDriven.Core
 {
-    public class Extensions
-    {
-    }
+    public interface IExtensionMarker { }
+    internal class ExtensionMarker : IExtensionMarker { }
 }

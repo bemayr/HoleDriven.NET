@@ -14,7 +14,7 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Configuration.ReportHoleEncountered(description, location);
+            Report.HoleEncountered(description, location);
             expression.Compile()();
         }
 
@@ -26,8 +26,20 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Configuration.ReportHoleEncountered(description, location);
+            Report.HoleEncountered(description, location);
             return expression.Compile()();
+        }
+
+        [Hole.Idea("enable marking of Blocks/Scopes, e.g. NextLine, following if/switch/loop, also make sure to check the correct usage of those scopes with an analyzer")]
+        public static void Refactor<T>(
+            string description,
+            object scope,
+            [CallerFilePath] string callerFilePath = null,
+            [CallerLineNumber] int callerLineNumber = int.MinValue,
+            [CallerMemberName] string callerMemberName = null)
+        {
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            Report.HoleEncountered(description, location);
         }
     }
 }

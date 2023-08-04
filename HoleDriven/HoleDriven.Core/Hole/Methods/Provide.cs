@@ -33,8 +33,8 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Configuration.ReportHoleEncountered(description, location);
-            Configuration.ReportProvideHappened(description, value, location);
+            Report.HoleEncountered(description, location);
+            Report.ProvideHappened(description, value, location);
             return value;
         }
 
@@ -48,8 +48,8 @@ namespace HoleDriven
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
             var value = valueProvider(new ProvideInput(description)).Value;
 
-            Configuration.ReportHoleEncountered(description, location);
-            Configuration.ReportProvideHappened(description, value, location);
+            Report.HoleEncountered(description, location);
+            Report.ProvideHappened(description, value, location);
             return value;
         }
     }

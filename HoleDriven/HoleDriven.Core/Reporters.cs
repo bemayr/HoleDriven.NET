@@ -1,65 +1,89 @@
 ﻿using System;
-using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
-namespace HoleDriven
-{
-    public static class Reporter
-    {
-        public delegate void HoleEncounteredDelegate(Core.HoleType type, string description, Core.HoleLocation location);
-        public delegate void EffectHappenedDelegate(string description, Core.HoleLocation location);
-        public delegate void EffectAsyncStartedDelegate(string description, Guid id, Task task, Core.HoleLocation location);
-        public delegate void EffectAsyncCompletedDelegate(string description, Guid id, Task task, Core.HoleLocation location);
-        public delegate void ProvideHappenedDelegate(string description, object value, Core.HoleLocation location);
-        public delegate void ProvideAsyncStartedDelegate(string description, Guid id, Task task, Core.HoleLocation location);
-        public delegate void ProvideAsyncCompletedDelegate(string description, object value, Guid id, Task task, Core.HoleLocation location);
-        public delegate void ThrowHappenedDelegate(string description, Core.HoleNotFilledException exception, Core.HoleLocation location);
-    }
-
-    public static class Defaults
-    {
-        public static class Reporter
-        {
-            // TODO: maybe provide some additional hole information (for Refactor, Idea, ...)
-            public static void HoleEncountered(Core.HoleType type, string description, Core.HoleLocation location) =>
-                Console.WriteLine($"[🧩 {type}]: {description} (at {Core.Utilities.FormatLocation(location)})");
-            public static void EffectHappened(string description, Core.HoleLocation location) =>
-                Console.WriteLine($"[🥏 EFFECT]: {description} (at {Core.Utilities.FormatLocation(location)})");
-            public static void EffectAsyncStarted(string description, Guid id, Task task, Core.HoleLocation location) =>
-                Console.WriteLine($"[🥏 EFFECT.ASYNC] Started({id}): {description} (at {Core.Utilities.FormatLocation(location)})");
-            public static void EffectAsyncCompleted(string description, Guid id, Task task, Core.HoleLocation location) =>
-                Console.WriteLine($"[🥏 EFFECT.ASYNC] Completed({id}, {task.Status}): {description} (at {Core.Utilities.FormatLocation(location)})");
-            public static void ProvideHappened(string description, object value, Core.HoleLocation location) =>
-                Console.WriteLine($"[📤 PROVIDE]: Value provided: '{value}' (at {Core.Utilities.FormatLocation(location)})");
-            public static void ProvideAsyncStarted(string description, Guid id, Task task, Core.HoleLocation location) =>
-                Console.WriteLine($"[📤 PROVIDE.ASYNC] Started({id}) (at {Core.Utilities.FormatLocation(location)})");
-            public static void ProvideAsyncCompleted(string description, object value, Guid id, Task task, Core.HoleLocation location) =>
-                Console.WriteLine($"[📤 PROVIDE.ASYNC] Completed({id}, {task.Status}) with value '{value}' (at {Core.Utilities.FormatLocation(location)})");
-            public static void ThrowHappened(string description, Core.HoleNotFilledException exception, Core.HoleLocation location) =>
-                Console.WriteLine($"[💣 THROW]: {description} (at {Core.Utilities.FormatLocation(location)})");
-        }
-    }
-}
 
 namespace HoleDriven.Core
 {
-    public enum HoleType
+    public class Reporters
     {
-        Refactor,
-        Idea,
-        Effect,
-        EffectAsync,
-        Provide,
-        ProvideAsync,
-        Throw
-    }
+        public event Reporter.HoleEncounteredDelegate HoleEncounteredReporter;
+        public event Reporter.EffectHappenedDelegate EffectHappenedReporter;
+        public event Reporter.EffectAsyncStartedDelegate EffectAsyncStartedReporter;
+        public event Reporter.EffectAsyncCompletedDelegate EffectAsyncCompletedReporter;
+        public event Reporter.ProvideHappenedDelegate ProvideHappenedReporter;
+        public event Reporter.ProvideAsyncStartedDelegate ProvideAsyncStartedReporter;
+        public event Reporter.ProvideAsyncCompletedDelegate ProvideAsyncCompletedReporter;
+        public event Reporter.ThrowHappenedDelegate ThrowHappenedReporter;
 
-    internal static class Utilities
-    {
-        internal static string FormatLocation(HoleLocation location)
+        public Reporters() => SetDefaultReporters();
+
+        private void SetDefaultReporters()
         {
-            var fileName = Path.GetFileName(location.FilePath);
-            return $"{location.CallerMemberName} in {fileName}:line {location.LineNumber}";
+            HoleEncounteredReporter = Defaults.Reporter.HoleEncountered;
+            EffectHappenedReporter = Defaults.Reporter.EffectHappened;
+            EffectAsyncStartedReporter = Defaults.Reporter.EffectAsyncStarted;
+            EffectAsyncCompletedReporter = Defaults.Reporter.EffectAsyncCompleted;
+            ProvideHappenedReporter = Defaults.Reporter.ProvideHappened;
+            ProvideAsyncStartedReporter = Defaults.Reporter.ProvideAsyncStarted;
+            ProvideAsyncCompletedReporter = Defaults.Reporter.ProvideAsyncCompleted;
+            ThrowHappenedReporter = Defaults.Reporter.ThrowHappened;
         }
+
+        public void RemoveDefaultReporters()
+        {
+            RemoveDefaultHoleEncounteredReporter();
+            RemoveDefaultEffectHappenedReporter();
+            RemoveDefaultEffectAsyncStartedReporter();
+            RemoveDefaultEffectAsyncCompletedReporter();
+            RemoveDefaultProvideHappenedReporter();
+            RemoveDefaultProvideAsyncStartedReporter();
+            RemoveDefaultProvideAsyncCompletedReporter();
+            RemoveDefaultThrowHappenedReporter();
+        }
+        public void RemoveDefaultHoleEncounteredReporter() => HoleEncounteredReporter -= Defaults.Reporter.HoleEncountered;
+        public void RemoveDefaultEffectHappenedReporter() => EffectHappenedReporter -= Defaults.Reporter.EffectHappened;
+        public void RemoveDefaultEffectAsyncStartedReporter() => EffectAsyncStartedReporter -= Defaults.Reporter.EffectAsyncStarted;
+        public void RemoveDefaultEffectAsyncCompletedReporter() => EffectAsyncCompletedReporter -= Defaults.Reporter.EffectAsyncCompleted;
+        public void RemoveDefaultProvideHappenedReporter() => ProvideHappenedReporter -= Defaults.Reporter.ProvideHappened;
+        public void RemoveDefaultProvideAsyncStartedReporter() => ProvideAsyncStartedReporter -= Defaults.Reporter.ProvideAsyncStarted;
+        public void RemoveDefaultProvideAsyncCompletedReporter() => ProvideAsyncCompletedReporter -= Defaults.Reporter.ProvideAsyncCompleted;
+        public void RemoveDefaultThrowHappenedReporter() => ThrowHappenedReporter -= Defaults.Reporter.ThrowHappened;
+        public void ReplaceReporters(
+            Reporter.HoleEncounteredDelegate holeEncounteredReporter,
+            Reporter.EffectHappenedDelegate effectHappenedReporter,
+            Reporter.EffectAsyncStartedDelegate effectAsyncStartedReporter,
+            Reporter.EffectAsyncCompletedDelegate effectAsyncCompletedReporter,
+            Reporter.ProvideHappenedDelegate provideHappenedReporter,
+            Reporter.ProvideAsyncStartedDelegate provideAsyncStartedReporter,
+            Reporter.ProvideAsyncCompletedDelegate provideAsyncCompletedReporter,
+            Reporter.ThrowHappenedDelegate throwHappenedReporter)
+        {
+            HoleEncounteredReporter = holeEncounteredReporter;
+            EffectHappenedReporter = effectHappenedReporter;
+            EffectAsyncStartedReporter = effectAsyncStartedReporter;
+            EffectAsyncCompletedReporter = effectAsyncCompletedReporter;
+            ProvideHappenedReporter = provideHappenedReporter;
+            ProvideAsyncStartedReporter = provideAsyncStartedReporter;
+            ProvideAsyncCompletedReporter = provideAsyncCompletedReporter;
+            ThrowHappenedReporter = throwHappenedReporter;
+        }
+        public void ResetDefaultReporters() => SetDefaultReporters();
+
+        internal void HoleEncountered(string description, Core.HoleLocation location, [CallerMemberName] string callerMemberName = null) =>
+            HoleEncounteredReporter?.Invoke((Core.HoleType)Enum.Parse(typeof(Core.HoleType), callerMemberName), description, location);
+        internal void EffectHappened(string description, Core.HoleLocation location) =>
+            EffectHappenedReporter?.Invoke(description, location);
+        internal void EffectAsyncStarted(string description, Guid id, Task task, Core.HoleLocation location) =>
+            EffectAsyncStartedReporter?.Invoke(description, id, task, location);
+        internal void EffectAsyncCompleted(string description, Guid id, Task task, Core.HoleLocation location) =>
+            EffectAsyncCompletedReporter?.Invoke(description, id, task, location);
+        internal void ProvideHappened(string description, object value, Core.HoleLocation location) =>
+            ProvideHappenedReporter?.Invoke(description, value, location);
+        internal void ProvideAsyncStarted(string description, Guid id, Task task, Core.HoleLocation location) =>
+            ProvideAsyncStartedReporter?.Invoke(description, id, task, location);
+        internal void ProvideAsyncCompleted(string description, object value, Guid id, Task task, Core.HoleLocation location) =>
+            ProvideAsyncCompletedReporter?.Invoke(description, value, id, task, location);
+        internal void ThrowHappened(string description, Core.HoleNotFilledException exception, Core.HoleLocation location) =>
+            ThrowHappenedReporter.Invoke(description, exception, location);
     }
 }

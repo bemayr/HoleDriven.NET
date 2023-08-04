@@ -10,10 +10,10 @@ namespace HoleDriven
     {
         private Configure() { } // hide the public constructor
 
-        private static readonly Lazy<Core.Reporters> _reporters  = new Lazy<Core.Reporters>(() => new Core.Reporters()); // TODO: "maybe create something like Reporters.Default
-        private static readonly Core.Extensions _extensions = new Core.Extensions();
+        private static readonly Lazy<Core.Reporters> _reporters = new Lazy<Core.Reporters>(() => new Core.Reporters()); // TODO: "maybe create something like Reporters.Default
+        private static readonly Core.IExtensionMarker _extensions = new Core.ExtensionMarker();
 
         public static Core.Reporters Reporters => _reporters.Value;
-        public static Core.Extensions Extensions => _extensions;
+        public static Core.IExtensionMarker Extensions => _extensions;
     }
 }

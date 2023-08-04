@@ -5,22 +5,22 @@ namespace HoleDriven.Bogus
 {
     public static class ProvideValueExtensions
     {
-        public static FakerResult<TValue> Fake<TValue>(this Hole.IProvideInput _, Func<Faker, TValue> fake)
+        public static BogusProvider<TValue> Bogus<TValue>(this Hole.IProvideInput _, Func<Faker, TValue> fake)
         {
-            return new FakerResult<TValue>(fake(new Faker()));
+            return new BogusProvider<TValue>(fake(new Faker()));
         }
 
-        public static FakerResult<TValue> Fake<TValue>(this Hole.IProvideInput _, Func<Faker<TValue>, Faker<TValue>> fake)
+        public static BogusProvider<TValue> Bogus<TValue>(this Hole.IProvideInput _, Func<Faker<TValue>, Faker<TValue>> fake)
             where TValue : class
         {
             var value = fake(new Faker<TValue>()).Generate(); // TODO: why does this compile without Generate
-            return new FakerResult<TValue>(value);
+            return new BogusProvider<TValue>(value);
         }
     }
 
-    public class FakerResult<TValue> : Hole.IProviderResult<TValue>
+    public class BogusProvider<TValue> : Hole.IProviderResult<TValue>
     {
-        public FakerResult(TValue value)
+        public BogusProvider(TValue value)
         {
             Value = value;
         }

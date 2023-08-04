@@ -12,8 +12,8 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Configuration.ReportHoleEncountered(description, location);
-            Configuration.ReportEffectHappened(description, location);
+            Report.HoleEncountered(description, location);
+            Report.EffectHappened(description, location);
         }
     }
 }
