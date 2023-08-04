@@ -57,6 +57,12 @@ namespace AttributeExample
 {
     [Hole.Idea("think of whether to include a direction in which we do not want to steer")]
     public enum Direction { Left, Down, Up }
+
+    [Hole.Idea("maybe refactor this into a record")]
+    public class Test
+    {
+        public string FirstName { get; init; } = default!;
+    }
 }
 
 [Hole.Refactor("check this dumb default! assignment")]

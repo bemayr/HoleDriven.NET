@@ -25,11 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Analyzers.Tests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{5511FC27-2A87-4993-9A18-DB849CE20CFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Extension.PrettyConsoleReporters", "HoleDriven.Extension.PrettyConsoleReporters\HoleDriven.Extension.PrettyConsoleReporters.csproj", "{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.PrettyConsoleReporters", "HoleDriven.Extension.PrettyConsoleReporters\HoleDriven.Extension.PrettyConsoleReporters.csproj", "{D867D31D-6EE3-4BE0-8645-3B08F625DB8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Extension.EffectHelpers", "HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.EffectHelpers.csproj", "{5165E039-A5C5-4419-AF5F-A1C53F63B5E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.EffectHelpers", "HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.EffectHelpers.csproj", "{5165E039-A5C5-4419-AF5F-A1C53F63B5E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Bogus", "HoleDriven.Extension.FakeDataProvider\HoleDriven.Bogus.csproj", "{12A54007-461B-43C4-9130-F00E2B845D13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Bogus", "HoleDriven.Extension.FakeDataProvider\HoleDriven.Bogus.csproj", "{12A54007-461B-43C4-9130-F00E2B845D13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

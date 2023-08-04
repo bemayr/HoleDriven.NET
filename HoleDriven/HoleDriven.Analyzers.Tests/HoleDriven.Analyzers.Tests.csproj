@@ -41,7 +41,7 @@
 		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="TestData\Refactor.Attribute.cs">
+	  <Compile Update="TestData\Refactor.Attribute.Class.cs">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Compile>
 	</ItemGroup>

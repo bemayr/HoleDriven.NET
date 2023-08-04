@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace HoleDriven.Analyzers
@@ -38,12 +39,29 @@ namespace HoleDriven.Analyzers
                 Console.WriteLine(optimizationLevel);
 
                 compilationContext.RegisterSyntaxNodeAction(
-                    context => AnalyzeHoleMethods(context, optimizationLevel),
+                    WithErrorReporting(AnalyzeHoleMethods, nameof(AnalyzeHoleMethods)),
                     SyntaxKind.InvocationExpression);
 
                 compilationContext.RegisterSyntaxNodeAction(
-                    context => AnalyzeHoleAttributes(context, optimizationLevel),
+                    WithErrorReporting(AnalyzeHoleAttributes, nameof(AnalyzeHoleAttributes)),
                     SyntaxKind.Attribute);
+
+                Action<SyntaxNodeAnalysisContext> WithErrorReporting(
+                    Action<SyntaxNodeAnalysisContext, OptimizationLevel> analyze,
+                    string analyzeMethodName) =>
+                    (context) =>
+                        {
+                            try
+                            {
+                                analyze(context, optimizationLevel);
+                            }
+                            catch (Exception inner)
+                            {
+                                var stackTrace = new StackTrace(inner, true);
+                                var relevantFrame = stackTrace.GetFrame(0);
+                                throw new Exception($"ANALYZER({analyzeMethodName}) FAILED at {context.Node.GetText()} [Exception: {inner.Message} @ {relevantFrame.GetFileName()}:line {relevantFrame.GetFileLineNumber()}]", inner);
+                            }
+                        };
             });
         }
 
@@ -53,7 +71,7 @@ namespace HoleDriven.Analyzers
             var memberAccessExpression = invocationExpression.Expression as MemberAccessExpressionSyntax; // Hole.< ...>
 
             var holeExpression = memberAccessExpression?.Expression as IdentifierNameSyntax; // Hole
-            if (holeExpression.Identifier.Text != "Hole")
+            if (holeExpression?.Identifier.Text != "Hole")
                 return; // we are not dealing with a Hole expression
 
             var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol as IMethodSymbol;
@@ -120,7 +138,7 @@ namespace HoleDriven.Analyzers
                     if (wrappedToRefactorExpression is null)
                         return null; // The second parameter is no parenthesized lambda expression
 
-                    return $"⚒️ Refactoring needed for:{Environment.NewLine}{wrappedToRefactorExpression.Body}";
+                    return $"⚒️ Refactoring needed for:\r\n{wrappedToRefactorExpression.Body}";
                 }
                 else return null;
             }
@@ -143,7 +161,7 @@ namespace HoleDriven.Analyzers
             var nameSyntax = syntax.Name as QualifiedNameSyntax;
 
             var namePrefixSyntax = nameSyntax?.Left as IdentifierNameSyntax; // Hole
-            if (namePrefixSyntax.Identifier.Text != "Hole")
+            if (namePrefixSyntax?.Identifier.Text != "Hole")
                 return; // we are not dealing with a Hole attribute
 
             var constructorSymbol = context.SemanticModel.GetSymbolInfo(nameSyntax).Symbol as IMethodSymbol;
@@ -180,15 +198,24 @@ namespace HoleDriven.Analyzers
                 OptimizationLevel.Debug => DiagnosticSeverity.Info,
                 _ => throw new System.Exception($"Unknown OptimizationLevel: {optimizationLevel}"),
             };
-            var location = syntax.GetLocation(); // TODO: apply to the location of target
+
+            // TODO: this does not work :(, if one uses this location, no Diagnostic gets reported
+            var appliedSyntaxNode = syntax.Parent?.Parent;
+            var location = appliedSyntaxNode switch
+            {
+                ClassDeclarationSyntax classDeclaration => classDeclaration?.Identifier.GetLocation(),
+                EnumDeclarationSyntax enumDeclaration => enumDeclaration?.Identifier.GetLocation(),
+                RecordDeclarationSyntax recordDeclaration => recordDeclaration?.Identifier.GetLocation(),
+                _ => appliedSyntaxNode.GetLocation()
+            };
 
             var diagnostic = CreateHoleDiagnostic(
                 diagnosticDescriptor,
                 holeDescription,
                 severity,
-                location,
-                additionalDescription: null,
-                additionalLocations: null);
+                location: syntax.GetLocation(),
+                additionalDescription: $"{location} should be highlighted",
+                additionalLocations: new[] { location });
 
             context.ReportDiagnostic(diagnostic);
         }
