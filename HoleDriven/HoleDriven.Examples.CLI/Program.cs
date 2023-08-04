@@ -59,6 +59,7 @@ namespace AttributeExample
     public enum Direction { Left, Down, Up }
 }
 
+[Hole.Refactor("check this dumb default! assignment")]
 internal record User
 {
     public string FirstName { get; init; } = default!;

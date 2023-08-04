@@ -39,6 +39,7 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            Hole.Idea("use the scope in some way or mark it as mandatory");
             Report.HoleEncountered(description, location);
         }
     }

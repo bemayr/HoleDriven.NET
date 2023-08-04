@@ -38,12 +38,16 @@ namespace HoleDriven.Analyzers
                 Console.WriteLine(optimizationLevel);
 
                 compilationContext.RegisterSyntaxNodeAction(
-                    context => AnalyzeHoles(context, optimizationLevel),
+                    context => AnalyzeHoleMethods(context, optimizationLevel),
                     SyntaxKind.InvocationExpression);
+
+                compilationContext.RegisterSyntaxNodeAction(
+                    context => AnalyzeHoleAttributes(context, optimizationLevel),
+                    SyntaxKind.Attribute);
             });
         }
 
-        private static void AnalyzeHoles(SyntaxNodeAnalysisContext context, OptimizationLevel optimizationLevel)
+        private static void AnalyzeHoleMethods(SyntaxNodeAnalysisContext context, OptimizationLevel optimizationLevel)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node; // Hole.<...>(<...>)
             var memberAccessExpression = invocationExpression.Expression as MemberAccessExpressionSyntax; // Hole.< ...>
@@ -131,6 +135,62 @@ namespace HoleDriven.Analyzers
                 }
                 else return null;
             }
+        }
+
+        private static void AnalyzeHoleAttributes(SyntaxNodeAnalysisContext context, OptimizationLevel optimizationLevel)
+        {
+            var syntax = (AttributeSyntax)context.Node; // Hole.<...>(<...>)
+            var nameSyntax = syntax.Name as QualifiedNameSyntax;
+
+            var namePrefixSyntax = nameSyntax?.Left as IdentifierNameSyntax; // Hole
+            if (namePrefixSyntax.Identifier.Text != "Hole")
+                return; // we are not dealing with a Hole attribute
+
+            var constructorSymbol = context.SemanticModel.GetSymbolInfo(nameSyntax).Symbol as IMethodSymbol;
+            if (!constructorSymbol?.ToString().StartsWith("HoleDriven.Hole") ?? true)
+                return; // the Hole we detected did not originate from the Holedriven library
+
+            var argumentList = syntax.ArgumentList as AttributeArgumentListSyntax;
+            if ((argumentList?.Arguments.Count ?? 0) < 1)
+                return; // Description is always the first argument, so we have to have at least one
+
+            var descriptionLiteral = argumentList.Arguments[0].Expression as LiteralExpressionSyntax;
+            if (descriptionLiteral is null)
+                return; /// Description is not a literal, although this should be caught by <see cref="HoleMustHaveDescriptionAnalyzer"/>
+
+            var descriptionOptional = context.SemanticModel.GetConstantValue(descriptionLiteral);
+            if (!descriptionOptional.HasValue)
+                return;
+
+            var holeDescription = descriptionOptional.Value as string;
+            if (holeDescription is null)
+                return;
+
+            var attributeName = constructorSymbol.ContainingType.Name;
+            var diagnosticDescriptor = attributeName.Replace("Attribute", string.Empty) switch
+            {
+                nameof(Diagnostic.Refactor) => Diagnostic.Refactor,
+                nameof(Diagnostic.Idea) => Diagnostic.Idea,
+                _ => null,
+            };
+
+            var severity = optimizationLevel switch
+            {
+                OptimizationLevel.Release => DiagnosticSeverity.Error,
+                OptimizationLevel.Debug => DiagnosticSeverity.Info,
+                _ => throw new System.Exception($"Unknown OptimizationLevel: {optimizationLevel}"),
+            };
+            var location = syntax.GetLocation(); // TODO: apply to the location of target
+
+            var diagnostic = CreateHoleDiagnostic(
+                diagnosticDescriptor,
+                holeDescription,
+                severity,
+                location,
+                additionalDescription: null,
+                additionalLocations: null);
+
+            context.ReportDiagnostic(diagnostic);
         }
 
         public static class Diagnostic
