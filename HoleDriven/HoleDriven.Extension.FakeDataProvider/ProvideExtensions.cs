@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using System;
 
-namespace HoleDriven.Bogus
+namespace HoleDriven.Extension.Bogus
 {
     public static class ProvideValueExtensions
     {

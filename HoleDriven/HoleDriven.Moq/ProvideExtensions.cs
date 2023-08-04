@@ -2,7 +2,7 @@
 using System;
 using System.Linq.Expressions;
 
-namespace HoleDriven.Moq
+namespace HoleDriven.Extension.Moq
 {
     public static class ProvideValueExtensions
     {
@@ -17,7 +17,7 @@ namespace HoleDriven.Moq
         public static TMocked Moq<TMocked>(this Hole.IProvideInput _, Expression<Func<TMocked, bool>> predicate, MockBehavior mockBehavior = MockBehavior.Default)
             where TMocked : class
         {
-            return Mock.Of(predicate, MockBehavior.Strict);
+            return Mock.Of(predicate, mockBehavior);
         }
     }
 }

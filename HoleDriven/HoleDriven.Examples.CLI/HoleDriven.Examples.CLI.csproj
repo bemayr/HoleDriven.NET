@@ -18,9 +18,9 @@
   <ItemGroup>
     <ProjectReference Include="..\HoleDriven.Analyzers\HoleDriven.Analyzers\HoleDriven.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\HoleDriven.Core\HoleDriven.Core.csproj" />
-    <ProjectReference Include="..\HoleDriven.Extension.FakeDataProvider\HoleDriven.Bogus.csproj" />
+    <ProjectReference Include="..\HoleDriven.Extension.FakeDataProvider\HoleDriven.Extension.Bogus.csproj" />
     <ProjectReference Include="..\HoleDriven.Extension.PrettyConsoleReporters\HoleDriven.Extension.PrettyConsoleReporters.csproj" />
-    <ProjectReference Include="..\HoleDriven.Moq\HoleDriven.Moq.csproj" />
+    <ProjectReference Include="..\HoleDriven.Moq\HoleDriven.Extension.Moq.csproj" />
     <ProjectReference Include="..\HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.EffectHelpers.csproj" />
   </ItemGroup>
 

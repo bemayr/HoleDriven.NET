@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.Pretty
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.EffectHelpers", "HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.EffectHelpers.csproj", "{5165E039-A5C5-4419-AF5F-A1C53F63B5E4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Bogus", "HoleDriven.Extension.FakeDataProvider\HoleDriven.Bogus.csproj", "{12A54007-461B-43C4-9130-F00E2B845D13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.Bogus", "HoleDriven.Extension.FakeDataProvider\HoleDriven.Extension.Bogus.csproj", "{12A54007-461B-43C4-9130-F00E2B845D13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Moq", "HoleDriven.Moq\HoleDriven.Moq.csproj", "{0BA0B633-4CB8-40A8-A195-69193D81CA13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Extension.Moq", "HoleDriven.Moq\HoleDriven.Extension.Moq.csproj", "{0BA0B633-4CB8-40A8-A195-69193D81CA13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

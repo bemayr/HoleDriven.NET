@@ -1,7 +1,7 @@
 ﻿using HoleDriven;
-using HoleDriven.Bogus;
-using HoleDriven.Moq;
 using HoleDriven.EffectHelpers;
+using HoleDriven.Extension.Bogus;
+using HoleDriven.Extension.Moq;
 using HoleDriven.Extension.PrettyConsoleReporters;
 using System.Text;
 using Spectre.Console;
