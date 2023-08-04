@@ -6,36 +6,47 @@ namespace HoleDriven
 {
     public static partial class Hole
     {
-        internal class SetAsyncResultCompleted : Core.IEffectAsyncResult
-        {
-            public Task Task => Task.CompletedTask;
-        }
+        public delegate Task SetAsyncResultProvider(EffectAsyncInput task);
 
-        public delegate Core.IEffectAsyncResult SetAsyncResultProvider(IEffectAsyncInput task);
-
-        public interface IEffectAsyncInput
-        {
-            Guid Id { get; }
-        }
-
-        internal class EffectAsyncInputTask : IEffectAsyncInput
+        public class EffectAsyncInput
         {
             public Guid Id { get; }
-            public EffectAsyncInputTask(Guid id) => Id = id;
+            public string Description { get; }
+            public EffectAsyncInput(Guid id, string description)
+            {
+                Id = id;
+                Description = description;
+            }
         }
 
         public static async Task EffectAsync(
             string description,
-            SetAsyncResultProvider resultProvider = null,
+            Task effect = null,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            resultProvider = resultProvider ?? (_ => new SetAsyncResultCompleted());
+            effect = effect ?? Task.CompletedTask;
 
             var id = Guid.NewGuid();
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            var task = resultProvider(new EffectAsyncInputTask(id)).Task;
+
+            Report.HoleEncountered(description, location);
+            Report.EffectAsyncStarted(description, id, effect, location);
+            await effect;
+            Report.EffectAsyncCompleted(description, id, effect, location);
+        }
+
+        public static async Task EffectAsync(
+            string description,
+            SetAsyncResultProvider taskProvider,
+            [CallerFilePath] string callerFilePath = null,
+            [CallerLineNumber] int callerLineNumber = int.MinValue,
+            [CallerMemberName] string callerMemberName = null)
+        {
+            var id = Guid.NewGuid();
+            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var task = taskProvider(new EffectAsyncInput(id, description));
 
             Report.HoleEncountered(description, location);
             Report.EffectAsyncStarted(description, id, task, location);

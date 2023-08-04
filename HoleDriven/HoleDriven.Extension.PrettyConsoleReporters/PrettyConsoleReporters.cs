@@ -1,4 +1,5 @@
 ﻿using HoleDriven;
+using HoleDriven.Core;
 using Spectre.Console;
 using System;
 using System.IO;
@@ -11,7 +12,11 @@ namespace HoleDriven.Extension.PrettyConsoleReporters
     {
         [Hole.Idea("add an enum flag that allows disabling of individual reporters")]
         [Hole.Idea("add a setting that disables or enables style interpolation")]
-        public static void ActivatePrettyConsoleReporters(this Core.IExtensionMarker _) => Configure.Reporters.ReplaceReporters(HoleEncountered, EffectHappened, EffectAsyncStarted, EffectAsyncCompleted, ProvideHappened, ProvideAsyncStarted, ProvideAsyncCompleted, ThrowHappened);
+        public static void ActivatePrettyConsoleReporters(this Core.IExtensionMarker _, Reporter disable = Reporter.None)
+        {
+            Configure.Reporters.ReplaceReporters(HoleEncountered, EffectHappened, EffectAsyncStarted, EffectAsyncCompleted, ProvideHappened, ProvideAsyncStarted, ProvideAsyncCompleted, ThrowHappened);
+            Configure.Reporters.DisableReporters(disable);
+        }
 
         private static void HoleEncountered(Core.HoleType type, string description, Core.HoleLocation location) =>
             AnsiConsole.MarkupLine($"🧩 [bold invert springgreen1][[{type}]][/]: {description} [dim](at {FormatLocation(location)})[/]");

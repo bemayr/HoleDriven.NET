@@ -76,7 +76,7 @@ namespace HoleDriven.Core
             ProvideAsyncCompletedReporter = provideAsyncCompletedReporter;
             ThrowHappenedReporter = throwHappenedReporter;
         }
-        public void ResetDefaultReporters() => SetDefaultReporters();
+        public void RestoreDefaultReporters() => SetDefaultReporters();
         public void DisableReporters(Reporter reporters)
         {
             if (reporters.HasFlag(Reporter.HoleEncountered)) HoleEncounteredReporter = null;

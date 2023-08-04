@@ -21,7 +21,7 @@
     <ProjectReference Include="..\HoleDriven.Extension.FakeDataProvider\HoleDriven.Extension.Bogus.csproj" />
     <ProjectReference Include="..\HoleDriven.Extension.PrettyConsoleReporters\HoleDriven.Extension.PrettyConsoleReporters.csproj" />
     <ProjectReference Include="..\HoleDriven.Moq\HoleDriven.Extension.Moq.csproj" />
-    <ProjectReference Include="..\HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.EffectHelpers.csproj" />
+    <ProjectReference Include="..\HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.TaskHelpers.csproj" />
   </ItemGroup>
 
 </Project>
