@@ -7,12 +7,7 @@ namespace HoleDriven
 {
     public static partial class Hole
     {
-        public interface IProviderResult<TValue>
-        {
-            TValue Value { get; }
-        }
-
-        public delegate IProviderResult<TValue> ProvideValueProvider<TValue>(IProvideInput hole);
+        public delegate TValue ProvideValueProvider<TValue>(IProvideInput hole);
 
         public interface IProvideInput
         {
@@ -46,7 +41,7 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            var value = valueProvider(new ProvideInput(description)).Value;
+            var value = valueProvider(new ProvideInput(description));
 
             Report.HoleEncountered(description, location);
             Report.ProvideHappened(description, value, location);
