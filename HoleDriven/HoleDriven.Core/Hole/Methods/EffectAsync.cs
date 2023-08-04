@@ -11,7 +11,18 @@ namespace HoleDriven
             public Task Task => Task.CompletedTask;
         }
 
-        public delegate Core.IEffectAsyncResult SetAsyncResultProvider(string a);
+        public delegate Core.IEffectAsyncResult SetAsyncResultProvider(IEffectAsyncInput task);
+
+        public interface IEffectAsyncInput
+        {
+            Guid Id { get; }
+        }
+
+        internal class EffectAsyncInputTask : IEffectAsyncInput
+        {
+            public Guid Id { get; }
+            public EffectAsyncInputTask(Guid id) => Id = id;
+        }
 
         public static async Task EffectAsync(
             string description,
@@ -24,9 +35,7 @@ namespace HoleDriven
 
             var id = Guid.NewGuid();
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            var task = Hole.Refactor(
-                description: "🔴 check whether this is needed and what it does",
-                () => resultProvider("what the fuck does this string do").Task);
+            var task = resultProvider(new EffectAsyncInputTask(id)).Task;
 
             Configuration.ReportHoleEncountered(description, location);
             Configuration.ReportEffectAsyncStarted(description, id, task, location);

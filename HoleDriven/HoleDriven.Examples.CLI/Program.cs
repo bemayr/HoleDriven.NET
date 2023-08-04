@@ -1,4 +1,6 @@
 ﻿using HoleDriven;
+using HoleDriven.Extension.FakeDataProvider;
+using HoleDriven.Extension.FluentEffectAsyncHelpers;
 using System.Text;
 using Spectre.Console;
 
@@ -16,6 +18,24 @@ Console.OutputEncoding = Encoding.UTF8;
 //};
 
 HoleDriven.Extension.PrettyConsoleReporters.Activate();
+//HoleDriven.Extensions.Activate.PrettyConsoleReporters();
+
+//HoleDriven.Configure.Reporters.RemoveDefaultEffectHappenedReporter();
+//HoleDriven.Configure.Reporters.EffectHappenedReporter += null;
+//HoleDriven.Configure.Extensions.ActivatePrettyConsoleReporters();
+
+await Hole.EffectAsync(
+    "set the light bulb to flashing",
+    task => task.ThatTakesAround(TimeSpan.FromSeconds(1))); // .AndSucceedsWithAProbabilityOf(85.0 / 100));
+
+var user = Hole.Provide(
+    "get some random user",
+    value => value.Fake<User>(faker => faker.RuleFor(o => o.FirstName, f => f.Name.FirstName()))); // Fake vs. Mock vs. ...
+
+var name = Hole.Provide(
+    "get some random user",
+    value => value.Fake(faker => faker.Name.FirstName())); // Fake vs. Mock vs. ...
+
 
 // This is an example of an application that uses all possible Holes
 
@@ -36,4 +56,9 @@ namespace AttributeExample
 {
     [Hole.Idea("think of whether to include a direction in which we do not want to steer")]
     public enum Direction { Left, Down, Up }
+}
+
+internal record User
+{
+    public string FirstName { get; init; } = default!;
 }
