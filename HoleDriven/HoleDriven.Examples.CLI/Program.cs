@@ -1,5 +1,5 @@
 ﻿using HoleDriven;
-using HoleDriven.EffectHelpers;
+using HoleDriven.Core;
 using HoleDriven.Extension.Bogus;
 using HoleDriven.Extension.Moq;
 using HoleDriven.Extension.PrettyConsoleReporters;
@@ -24,12 +24,9 @@ Console.OutputEncoding = Encoding.UTF8;
 
 Hole.Idea("split the examples into individual files and show their usage");
 
-HoleDriven.Configure.Extensions.ActivatePrettyConsoleReporters();
+HoleDriven.Configure.Extensions.ActivatePrettyConsoleReporters(disable: Reporter.HoleEncountered);
 HoleDriven.Configure.Reporters.RemoveDefaultHoleEncounteredReporter();
 
-await Hole.EffectAsync(
-    "set the light bulb to flashing",
-    task => task.ThatTakesAround(TimeSpan.FromSeconds(1))); // .AndSucceedsWithAProbabilityOf(85.0 / 100));
 
 var user = Hole.Provide(
     "get some random [red]user[/]",
@@ -58,7 +55,6 @@ AnsiConsole.WriteLine("[italic]service2.saved:[/] " + service2.Save("anything"))
 var simpleValue = Hole.Provide("we can simply provide a value and the type is inferred automatically", 42);
 var asyncValue = await Hole.ProvideAsync("we can also get a value asynchronously", Task.FromResult("HoleDriven.NET"));
 Hole.Effect("we can also signal that an effect should happen");
-await Hole.EffectAsync("this effect can also happen asynchronously");
 try { Hole.Throw("if we want to throw an exception upon encountering a Hole, we can simply use `Hole.Throw`"); } catch { }
 var pi = Hole.Refactor(
     "we can also signal that something should be refactored, e.g. this literal should be replaced with a Math.PI",

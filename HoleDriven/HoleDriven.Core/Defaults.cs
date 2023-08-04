@@ -4,18 +4,6 @@ using System.Threading.Tasks;
 
 namespace HoleDriven
 {
-    public static class Reporter
-    {
-        public delegate void HoleEncounteredDelegate(Core.HoleType type, string description, Core.HoleLocation location);
-        public delegate void EffectHappenedDelegate(string description, Core.HoleLocation location);
-        public delegate void EffectAsyncStartedDelegate(string description, Guid id, Task task, Core.HoleLocation location);
-        public delegate void EffectAsyncCompletedDelegate(string description, Guid id, Task task, Core.HoleLocation location);
-        public delegate void ProvideHappenedDelegate(string description, object value, Core.HoleLocation location);
-        public delegate void ProvideAsyncStartedDelegate(string description, Guid id, Task task, Core.HoleLocation location);
-        public delegate void ProvideAsyncCompletedDelegate(string description, object value, Guid id, Task task, Core.HoleLocation location);
-        public delegate void ThrowHappenedDelegate(string description, Core.HoleNotFilledException exception, Core.HoleLocation location);
-    }
-
     public static class Defaults
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "these parameters must conform with the respective delegates")]
