@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.Effect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Bogus", "HoleDriven.Extension.FakeDataProvider\HoleDriven.Bogus.csproj", "{12A54007-461B-43C4-9130-F00E2B845D13}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Moq", "HoleDriven.Moq\HoleDriven.Moq.csproj", "{0BA0B633-4CB8-40A8-A195-69193D81CA13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{12A54007-461B-43C4-9130-F00E2B845D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12A54007-461B-43C4-9130-F00E2B845D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12A54007-461B-43C4-9130-F00E2B845D13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BA0B633-4CB8-40A8-A195-69193D81CA13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BA0B633-4CB8-40A8-A195-69193D81CA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BA0B633-4CB8-40A8-A195-69193D81CA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BA0B633-4CB8-40A8-A195-69193D81CA13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{D867D31D-6EE3-4BE0-8645-3B08F625DB8C} = {5511FC27-2A87-4993-9A18-DB849CE20CFB}
 		{5165E039-A5C5-4419-AF5F-A1C53F63B5E4} = {7A41D968-2530-4260-B5F4-B9043FA9777E}
 		{12A54007-461B-43C4-9130-F00E2B845D13} = {7A41D968-2530-4260-B5F4-B9043FA9777E}
+		{0BA0B633-4CB8-40A8-A195-69193D81CA13} = {7A41D968-2530-4260-B5F4-B9043FA9777E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A322560A-D946-4618-9F01-EBA9CDBBD5A3}

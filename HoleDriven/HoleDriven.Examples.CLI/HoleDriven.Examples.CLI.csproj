@@ -20,6 +20,7 @@
     <ProjectReference Include="..\HoleDriven.Core\HoleDriven.Core.csproj" />
     <ProjectReference Include="..\HoleDriven.Extension.FakeDataProvider\HoleDriven.Bogus.csproj" />
     <ProjectReference Include="..\HoleDriven.Extension.PrettyConsoleReporters\HoleDriven.Extension.PrettyConsoleReporters.csproj" />
+    <ProjectReference Include="..\HoleDriven.Moq\HoleDriven.Moq.csproj" />
     <ProjectReference Include="..\HoleDriven.NET.FluentEffectAsyncHelpers\HoleDriven.Extension.EffectHelpers.csproj" />
   </ItemGroup>
 

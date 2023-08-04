@@ -1,9 +1,11 @@
 ﻿using HoleDriven;
 using HoleDriven.Bogus;
+using HoleDriven.Moq;
 using HoleDriven.EffectHelpers;
 using HoleDriven.Extension.PrettyConsoleReporters;
 using System.Text;
 using Spectre.Console;
+using Moq;
 
 // enable Emoji support in Console
 Console.OutputEncoding = Encoding.UTF8;
@@ -31,12 +33,25 @@ await Hole.EffectAsync(
 
 var user = Hole.Provide(
     "get some random [red]user[/]",
-    value => value.Bogus<User>(f => f.RuleFor(o => o.FirstName, f => f.Name.FirstName()))); // Fake vs. Mock vs. ...
+    value => value.Bogus<User>(f => f.RuleFor(o => o.FirstName, f => f.Name.FirstName())));
 
 var name = Hole.Provide(
     "ask the user to enter his/her real username",
-    value => value.Bogus(f => f.Name.FirstName())); // Fake vs. Mock vs. ...
+    value => value.Bogus(f => f.Name.FirstName()));
 
+var service1 = Hole.Provide(
+    "actually create a Service that does something",
+    service => service.Moq<IService>(mock =>
+    {
+        mock.Setup(s => s.Save(It.IsAny<string>())).Returns(true);
+    }));
+
+var service2 = Hole.Provide(
+    "actually create a Service that does something",
+    service => service.Moq<IService>(mock => mock.Save(It.IsAny<string>()) == true));
+
+AnsiConsole.WriteLine("[italic]service1.saved:[/] " + service1.Save("anything"));
+AnsiConsole.WriteLine("[italic]service2.saved:[/] " + service2.Save("anything"));
 
 // This is an example of an application that uses all possible Holes
 
@@ -69,4 +84,9 @@ namespace AttributeExample
 internal record User
 {
     public string FirstName { get; init; } = default!;
+}
+
+public interface IService
+{
+    public bool Save(string message);
 }
