@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace HoleDriven.Extension.FluentEffectAsyncHelpers
+namespace HoleDriven.EffectHelpers
 {
     public static class EffectAsyncExtensions
     {

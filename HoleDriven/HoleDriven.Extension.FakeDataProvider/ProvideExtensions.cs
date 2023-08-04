@@ -1,8 +1,7 @@
 ﻿using Bogus;
 using System;
-using System.Threading.Tasks;
 
-namespace HoleDriven.Extension.FakeDataProvider
+namespace HoleDriven.Bogus
 {
     public static class ProvideValueExtensions
     {

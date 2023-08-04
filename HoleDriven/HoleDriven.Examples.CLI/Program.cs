@@ -1,6 +1,7 @@
 ﻿using HoleDriven;
-using HoleDriven.Extension.FakeDataProvider;
-using HoleDriven.Extension.FluentEffectAsyncHelpers;
+using HoleDriven.Bogus;
+using HoleDriven.EffectHelpers;
+using HoleDriven.Extension.PrettyConsoleReporters;
 using System.Text;
 using Spectre.Console;
 
@@ -17,12 +18,9 @@ Console.OutputEncoding = Encoding.UTF8;
 //    AnsiConsole.MarkupLine($"🧩 [bold invert turquoise2][[EFFECT 🥏]][/]: [italic]{description}[/] [dim](at {formattedLocation})[/]");
 //};
 
-HoleDriven.Extension.PrettyConsoleReporters.Activate();
-//HoleDriven.Extensions.Activate.PrettyConsoleReporters();
-
-//HoleDriven.Configure.Reporters.RemoveDefaultEffectHappenedReporter();
-//HoleDriven.Configure.Reporters.EffectHappenedReporter += null;
-//HoleDriven.Configure.Extensions.ActivatePrettyConsoleReporters();
+HoleDriven.Configure.Reporters.RemoveDefaultEffectHappenedReporter();
+HoleDriven.Configure.Reporters.EffectHappenedReporter += null;
+HoleDriven.Configure.Extensions.ActivatePrettyConsoleReporters();
 
 await Hole.EffectAsync(
     "set the light bulb to flashing",
@@ -33,7 +31,7 @@ var user = Hole.Provide(
     value => value.Fake<User>(faker => faker.RuleFor(o => o.FirstName, f => f.Name.FirstName()))); // Fake vs. Mock vs. ...
 
 var name = Hole.Provide(
-    "get some random user",
+    "ask the user to enter his/her real username",
     value => value.Fake(faker => faker.Name.FirstName())); // Fake vs. Mock vs. ...
 
 
