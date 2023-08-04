@@ -1,19 +1,21 @@
 ﻿using HoleDriven;
-using HoleDriven.Core;
 using System.Text;
 using Spectre.Console;
 
 // enable Emoji support in Console
 Console.OutputEncoding = Encoding.UTF8;
 
-HoleDriven.Configuration.RemoveDefaultHoleEncounteredReporter();
-HoleDriven.Configuration.RemoveDefaultEffectHappenedReporter();
-HoleDriven.Configuration.EffectHappenedReporter += (description, location) =>
-{
-    var fileName = Path.GetFileName(location.FilePath);
-    var formattedLocation = $"{location.CallerMemberName} in {fileName}:line {location.LineNumber}";
-    AnsiConsole.MarkupLine($"🧩 [bold invert turquoise2][[EFFECT 🥏]][/]: [italic]{description}[/] [dim](at {formattedLocation})[/]");
-};
+// Customize Reporters
+//HoleDriven.Configuration.RemoveDefaultHoleEncounteredReporter();
+//HoleDriven.Configuration.RemoveDefaultEffectHappenedReporter();
+//HoleDriven.Configuration.EffectHappenedReporter += (description, location) =>
+//{
+//    var fileName = Path.GetFileName(location.FilePath);
+//    var formattedLocation = $"{location.CallerMemberName} in {fileName}:line {location.LineNumber}";
+//    AnsiConsole.MarkupLine($"🧩 [bold invert turquoise2][[EFFECT 🥏]][/]: [italic]{description}[/] [dim](at {formattedLocation})[/]");
+//};
+
+HoleDriven.Extension.PrettyConsoleReporters.Activate();
 
 // This is an example of an application that uses all possible Holes
 

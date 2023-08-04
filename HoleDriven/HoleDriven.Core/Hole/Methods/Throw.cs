@@ -13,9 +13,12 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var exception = new Core.HoleNotFilledException(description);
+
             Configuration.ReportHoleEncountered(description, location);
+            Configuration.ReportThrowHappened(description, exception, location);
             
-            throw new Core.HoleNotFilledException(description);
+            throw exception;
         }
     }
 }
