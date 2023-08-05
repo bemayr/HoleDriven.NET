@@ -1,5 +1,4 @@
-﻿using HoleDriven;
-using System.Text;
+﻿using System.Text;
 using Spectre.Console;
 using HoleDriven.Examples.CLI.Examples;
 using HoleDriven.Examples.CLI;
