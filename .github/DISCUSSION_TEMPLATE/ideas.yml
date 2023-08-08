@@ -20,8 +20,8 @@ body:
     attributes:
       label: Is a Proof of Concept needed?
       options:
-        - No
+        - "No"
         - Yes, already done (please add a reference)
-        - Yes
+        - "Yes"
     validations:
       required: true
