@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\HoleDriven.Analyzers\HoleDriven.Analyzers\HoleDriven.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
+		<ProjectReference Include="..\HoleDriven.Core\HoleDriven.Core.csproj" />
+	</ItemGroup>
+
+	<!-- https://stackoverflow.com/a/72736492 -->
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
+	</ItemGroup>
+
+</Project>

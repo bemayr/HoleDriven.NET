@@ -8,6 +8,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@microsoft/signalr": "^7.0.9",
 		"preact": "^10.13.1"
 	},
 	"devDependencies": {
