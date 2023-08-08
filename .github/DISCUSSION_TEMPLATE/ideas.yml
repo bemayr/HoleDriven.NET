@@ -1,55 +1,27 @@
-title: "[General] "
-labels: ["General Introduction"]
 body:
   - type: markdown
     attributes:
       value: |
-        This is text that will show up in the template!
+        You have got an idea how this project could be improved? Let's discuss it!
   - type: textarea
-    id: improvements
+    id: goal
     attributes:
       label: Top 3 improvements
-      description: "What are the top 3 improvements we could make to this project?"
-      value: |
-        1.
-        2.
-        3.
-        ...
-      render: bash
-    validations:
-      required: true
-  - type: markdown
-    attributes:
-      value: |
-        ## Markdown header
-        And some more markdown
+      description: "What is the goal of this idea?"
   - type: input
-    id: has-id
+    id: additional-references
     attributes:
-      label: Suggestions
-      description: A description about suggestions to help you
+      label: Additional References
+      description: "What is the goal of this idea?"
     validations:
       required: true
   - type: dropdown
-    id: download
+    id: poc-needed
     attributes:
-      label: Which area of this project could be most improved?
+      label: Is a Proof of Concept needed?
       options:
-        - Documentation
-        - Pull request review time
-        - Bug fix time
-        - Release cadence
+        - No
+        - Yes, already done (please add a reference)
+        - Yes
     validations:
       required: true
-  - type: checkboxes
-    attributes:
-      label: Check that box!
-      options:
-        - label: This one!
-          required: true
-        - label: I won't stop you if you check this one, too
-  - type: markdown
-    attributes:
-      value: |
-        ### The thrilling conclusion
-        _to our template_
