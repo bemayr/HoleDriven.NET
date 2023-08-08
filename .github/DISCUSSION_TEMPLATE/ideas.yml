@@ -6,9 +6,9 @@ body:
   - type: textarea
     id: goal
     attributes:
-      label: Top 3 improvements
+      label: Goal
       description: "What is the goal of this idea?"
-  - type: input
+  - type: textarea
     id: additional-references
     attributes:
       label: Additional References
