@@ -2,7 +2,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        You have got an idea how this project could be improved? Let's discuss it!
+        You have got an **idea** how this project could be improved? 🤩
+        **Let's discuss it!**
   - type: textarea
     id: goal
     attributes:
