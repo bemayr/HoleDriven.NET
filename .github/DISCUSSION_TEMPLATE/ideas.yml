@@ -8,13 +8,13 @@ body:
     attributes:
       label: Goal
       description: "What is the goal of this idea?"
+    validations:
+      required: true
   - type: textarea
     id: additional-references
     attributes:
       label: Additional References
       description: "What is the goal of this idea?"
-    validations:
-      required: true
   - type: dropdown
     id: poc-needed
     attributes:
