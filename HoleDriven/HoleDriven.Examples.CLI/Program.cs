@@ -26,7 +26,7 @@ AnsiConsole.Write(new FigletText("HoleDriven.NET").LeftJustified().Color(Color.G
 foreach (var example in examples)
     await Run(example);
 
-async Task Run(IExampleBase example)
+static async Task Run(IExampleBase example)
 {
     AnsiConsole.Write(new Rule($"[invert] {example.Name} [/]").Centered());
     AnsiConsole.MarkupLine($"{example.Description}");
