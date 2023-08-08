@@ -50,20 +50,20 @@ namespace Holedriven.Extension.Devtool
             host.Start();
 
 
-            Console.WriteLine("Checking addresses...");
+            //Console.WriteLine("Checking addresses...");
             var server = host.Services.GetRequiredService<IServer>();
             var addressFeature = server.Features.Get<IServerAddressesFeature>();
             foreach (var address in addressFeature.Addresses)
             {
                 var uri = new Uri(address);
                 var port = uri.Port;
-                Console.WriteLine($"Listing on [{address}]");
-                Console.WriteLine($"The port is [{port}]");
+                //Console.WriteLine($"Listing on [{address}]");
+                //Console.WriteLine($"The port is [{port}]");
 
                 var param = new Dictionary<string, string>() { { "connection", $"http://localhost:{port}" } };
                 var newUrl = new Uri(QueryHelpers.AddQueryString(new Uri(devtoolUrl).AbsoluteUri, param));
 
-                Console.WriteLine(newUrl);
+                //Console.WriteLine(newUrl);
             }
         }
 

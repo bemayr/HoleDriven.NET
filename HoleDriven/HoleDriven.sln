@@ -35,8 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoleDriven.Extension.Moq", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Holedriven.Extension.Devtool", "Holedriven.Extension.Devtool\Holedriven.Extension.Devtool.csproj", "{A4176CA9-1510-4695-96B1-B444AF5B3645}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{93C42054-77D7-4BC2-9167-8168377A5012}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleDriven.Examples.Devtool.CLI", "HoleDriven.Examples.Devtool.CLI\HoleDriven.Examples.Devtool.CLI.csproj", "{470DCBDA-05D7-462C-B63B-CBF0AA7E8DF8}"
 EndProject
 Global

@@ -29,7 +29,6 @@ namespace Holedriven.Extension.Devtool
             {
                 Console.WriteLine("Please connect a Client for prompting!");
                 await PromptHelper.UntilClientConnected;
-                Console.WriteLine($"client connected: {string.Join(", ", PromptHelper.ConnectedClients)}");
             }
 
             var generator = new JSchemaGenerator();
@@ -41,7 +40,7 @@ namespace Holedriven.Extension.Devtool
 
             PromptHelper.AddPrompt(guid);
 
-            await Devtool.PromptHubContext.Clients.All.SendAsync("prompt", guid, schemaJson);
+            await Devtool.PromptHubContext.Clients.All.SendAsync("prompt", new { guid, schemaJson });
             Console.WriteLine("prompt sent");
 
             // wait for result

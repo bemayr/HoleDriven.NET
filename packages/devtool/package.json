@@ -9,7 +9,10 @@
 	},
 	"dependencies": {
 		"@microsoft/signalr": "^7.0.9",
-		"preact": "^10.13.1"
+		"@rjsf/core": "^5.11.2",
+		"@rjsf/utils": "^5.11.2",
+		"@rjsf/validator-ajv8": "^5.11.2",
+		"preact": "^10.16.0"
 	},
 	"devDependencies": {
 		"@preact/preset-vite": "^2.5.0",

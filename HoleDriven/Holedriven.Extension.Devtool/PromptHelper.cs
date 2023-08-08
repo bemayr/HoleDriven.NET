@@ -11,7 +11,7 @@ namespace Holedriven.Extension.Devtool
 
         public static bool CanPrompt => ConnectedClients.Count > 0;
 
-        internal static TaskCompletionSource tcs { get; set; } = new TaskCompletionSource();
+        internal static TaskCompletionSource tcs = new();
         public static Task UntilClientConnected => tcs.Task;
 
         public static void ClientConnected(string id)

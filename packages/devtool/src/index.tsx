@@ -1,63 +1,62 @@
 import { render } from "preact";
-import preactLogo from "./assets/preact.svg";
 import "./style.css";
-import { useEffect, useMemo } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import * as signalR from "@microsoft/signalr";
+import validator from "@rjsf/validator-ajv8";
+import Form from "@rjsf/core";
 
 export function App() {
-  const queryParams = useMemo(() => new URLSearchParams(window.location.search), []);
-  const connectionUrl = useMemo(() => queryParams.get("connection"), [queryParams]);
+  const queryParams = useMemo(
+    () => new URLSearchParams(window.location.search),
+    []
+  );
+  const connectionUrl = useMemo(
+    () => queryParams.get("connection"),
+    [queryParams]
+  );
+  const [guid, setGuid] = useState<string>(undefined);
+  const [promptSchema, setPromptSchema] = useState<string>(undefined);
+  const [connection, setConnection] = useState<signalR.HubConnection>(undefined);
 
   useEffect(() => console.log(connectionUrl));
 
   useEffect(() => {
-	if(connectionUrl) {
-		let connection = new signalR.HubConnectionBuilder()
-			.withUrl(connectionUrl + "/hub/prompts")
-			.build();
-	
-		connection.on("prompt", data => {
-			console.log(data);
-		});
-	
-		connection.start()
-			// .then(() => connection.invoke("send", "Hello"));
-	}
-  }, [connectionUrl])
+    if (connectionUrl) {
+      let connection = new signalR.HubConnectionBuilder()
+        .withUrl(connectionUrl + "/hub/prompts")
+        .build();
+
+      connection.on("prompt", (data) => {
+        console.log(data.guid, data.schemaJson);
+        setGuid(data.guid);
+        setPromptSchema(JSON.parse(data.schemaJson));
+      });
+
+      connection.start();
+
+      setConnection(connection)
+    }
+  }, [connectionUrl]);
+
+  function submit({formData}) {
+    console.log(formData)
+    connection.invoke("ProvideValue", guid, JSON.stringify(formData))
+  }
 
   return (
     <div>
-      <a href="https://preactjs.com" target="_blank">
-        <img src={preactLogo} alt="Preact logo" height="160" width="160" />
-      </a>
-      <h1>Get Started building Vite-powered Preact Apps </h1>
-      <section>
-        <Resource
-          title="Learn Preact"
-          description="If you're new to Preact, try the interactive tutorial to learn important concepts"
-          href="https://preactjs.com/tutorial"
+      {!promptSchema ? (
+        <div>no prompt available</div>
+      ) : (
+        <Form<string>
+          schema={promptSchema}
+          validator={validator}
+          onChange={() => console.log("changed")}
+          onSubmit={submit}
+          onError={() => console.log("errors")}
         />
-        <Resource
-          title="Differences to React"
-          description="If you're coming from React, you may want to check out our docs to see where Preact differs"
-          href="https://preactjs.com/guide/v10/differences-to-react"
-        />
-        <Resource
-          title="Learn Vite"
-          description="To learn more about Vite and how you can customize it to fit your needs, take a look at their excellent documentation"
-          href="https://vitejs.dev"
-        />
-      </section>
+      )}
     </div>
-  );
-}
-
-function Resource(props) {
-  return (
-    <a href={props.href} target="_blank" class="resource">
-      <h2>{props.title}</h2>
-      <p>{props.description}</p>
-    </a>
   );
 }
 
