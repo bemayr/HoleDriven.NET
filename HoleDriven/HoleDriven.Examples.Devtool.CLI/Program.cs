@@ -13,7 +13,6 @@ using var loggerFactory = LoggerFactory.Create(builder =>
 });
 ILogger logger = loggerFactory.CreateLogger<Program>();
 logger.LogDebug("Example log message");
-logger.LogDebug(EventId)
 
 // enable Emoji support in Console
 Console.OutputEncoding = Encoding.UTF8;
@@ -23,6 +22,8 @@ HoleDriven.Configure.Extensions.ActivateDevtool(frontendUri: "http://localhost:5
 // ================================
 
 Console.Write("Please tell me who you are: ");
+var test = Console.ReadLine();
+Console.WriteLine(test);
 
 var person = Hole.Provide(
     "Prompt the User for his name and age",

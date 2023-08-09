@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-example-cli",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/HoleDriven/HoleDriven.Examples.CLI/bin/Debug/net6.0/HoleDriven.Examples.CLI.dll",
+            "args": [
+                "${workspaceFolder}/HoleDriven/HoleDriven.Examples.CLI"
+            ],
+            "cwd": "${workspaceFolder}/HoleDriven/HoleDriven.Examples.CLI",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "HoleDriven.Examples.Devtool.CLI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-example-devtool-cli",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/HoleDriven/HoleDriven.Examples.Devtool.CLI/bin/Debug/net6.0/HoleDriven.Examples.Devtool.CLI.dll",
+            "args": [
+                "${workspaceFolder}/HoleDriven/HoleDriven.Examples.Devtool.CLI"
+            ],
+            "cwd": "${workspaceFolder}/HoleDriven/HoleDriven.Examples.Devtool.CLI",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal", // https://stackoverflow.com/a/45479761
+            "internalConsoleOptions": "neverOpen",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
