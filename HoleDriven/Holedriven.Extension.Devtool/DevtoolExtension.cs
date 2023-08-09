@@ -65,7 +65,7 @@ namespace Holedriven.Extension.Devtool
     public static class DevtoolExtension
     {
         public static void UseDevtool(
-            this IHolesExtendable _,
+            this IHolesExtendable extendable,
             string frontendUri = "https://devtool.holedriven.net")
         {
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder();
@@ -84,10 +84,9 @@ namespace Holedriven.Extension.Devtool
             });
             IHost host = hostBuilder.Build();
 
-            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddConsole());
 
+            // TODO: this is how dependencies can be used in extensions
+            var loggerFactory = extendable.Dependencies.LoggerFactory;
 
             host.Start();
 

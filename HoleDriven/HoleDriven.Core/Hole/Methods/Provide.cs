@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HoleDriven.Core;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static HoleDriven.Hole;
@@ -28,8 +30,8 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Report.HoleEncountered(description, location);
-            Report.ProvideHappened(description, value, location);
+            ReportHoleEncountered(nameof(Provide), description, location);
+            ReportProvideHappened(description, value, location);
             return value;
         }
 
@@ -41,11 +43,25 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHoleEncountered(nameof(Provide), description, location);
             var value = valueProvider(new ProvideInput(description));
-
-            Report.HoleEncountered(description, location);
-            Report.ProvideHappened(description, value, location);
+            ReportProvideHappened(description, value, location);
             return value;
+        }
+
+        private static void ReportProvideHappened(string description, object value, Core.HoleLocation location)
+        {
+            Console.WriteLine("PROVIDE HAPPENED");
+            Logger.LogInformation(
+                HoleLogEvents.HoleEncountered,
+                "Provide happened {HoleId} {value} {HoleType} {HoleDescription} {HoleLocation}",
+                GetId(location),
+                value,
+                nameof(Provide),
+                description,
+                location);
+
+            Report.ProvideHappened(description, value, location);
         }
     }
 }

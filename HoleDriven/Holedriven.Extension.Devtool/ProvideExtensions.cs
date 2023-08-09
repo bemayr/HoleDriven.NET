@@ -32,6 +32,7 @@ namespace Holedriven.Extension.Devtool
             {
                 Console.WriteLine("⚠️ ⏸️ Please connect a Client for prompting!");
                 var logger = Dependencies.Instance.LoggerFactory.CreateLogger(typeof(ProvideExtensions).FullName);
+                // use loggerFactory passed into extension and make the dependencies instance internal
                 logger.LogWarning("⚠️ ⏸️ Please connect a Client for prompting!");
                 //Devtool.Instance.OpenFrontend();
                 await PromptHelper.UntilClientConnected;

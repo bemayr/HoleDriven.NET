@@ -9,9 +9,12 @@ namespace HoleDriven.Core
 
     public class HolesConfiguration : IHolesConfiguration
     {
+        public Dependencies Dependencies => Dependencies.Instance;
+
         public IHolesExtendable SetLogger(ILoggerFactory loggerFactory)
         {
             Dependencies.SetLoggerFactory(loggerFactory);
+            loggerFactory.CreateLogger("Some Category").LogError("inside here as well?");
             return this;
         }
     }
@@ -20,7 +23,10 @@ namespace HoleDriven.Core
     {
         IHolesExtendable SetLogger(ILoggerFactory loggerFactory);
     }
-    public interface IHolesExtendable { }
+    public interface IHolesExtendable
+    {
+        Dependencies Dependencies { get; }
+    }
     public static class Holes
     {
         public static void Configure(Action<IHolesConfiguration> configureHoles) => configureHoles(new HolesConfiguration());

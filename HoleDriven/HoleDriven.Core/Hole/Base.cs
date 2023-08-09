@@ -15,5 +15,24 @@ namespace HoleDriven
         public static Core.Reporters Report => Configure.Reporters;
 
         public static ILogger Logger => Dependencies.Instance.LoggerFactory.CreateLogger(typeof(Hole).FullName);
+
+        private static string GetId(HoleLocation location)
+        {
+            // a hole here leads to a StackOverflow of course
+            // TODO: "Id has to be generated based on the location, think of a generic way that is also compatible with Codegen",
+            return $"{location.FileName}:{location.CallerMemberName}:line {location.LineNumber}";
+        }
+        private static void ReportHoleEncountered(string type, string description, Core.HoleLocation location)
+        {
+            Logger.LogDebug(
+                HoleLogEvents.HoleEncountered,
+                "Hole encountered {HoleId} {HoleType} {HoleDescription} {HoleLocation}",
+                GetId(location),
+                type,
+                description,
+                location);
+
+            Report.HoleEncountered(description, location, type); // TODO: this type stuff is awful
+        }
     }
 }

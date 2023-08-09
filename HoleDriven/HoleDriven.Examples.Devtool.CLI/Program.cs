@@ -2,19 +2,23 @@
 using HoleDriven;
 using HoleDriven.Core;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Sinks.Notepad;
+using Serilog.Sinks.Udp.TextFormatters;
+using System.Net.Sockets;
 using System.Text;
 
-using var loggerFactory = LoggerFactory.Create(builder =>
-{
-    builder
-        .AddFilter("Microsoft", LogLevel.Warning)
-        .AddFilter("System", LogLevel.Warning)
-        .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
-        .AddConsole();
-});
-ILogger logger = loggerFactory.CreateLogger<Program>();
-logger.LogWarning("Example log message");
-Console.WriteLine("fadsf");
+var logger = new LoggerConfiguration()
+    .MinimumLevel.Verbose()
+    .WriteTo.Seq("http://localhost:5341")
+    .WriteTo.Udp("localhost", 9999, AddressFamily.InterNetwork, new Log4jTextFormatter())
+    .WriteTo.Console()
+    .CreateLogger();
+
+var loggerFactory = new LoggerFactory()
+    .AddSerilog(logger);
+
+loggerFactory.CreateLogger("Some Category").LogError("does this work now?");
 
 Holes.Configure(holes => holes
     .SetLogger(loggerFactory)
@@ -33,5 +37,7 @@ var person = Hole.Provide(
     value => value.Prompt<Person>());
 
 Console.WriteLine($"Hello {person?.Name}, you are {person?.Age} years old");
+
+Console.Read();
 
 record Person(string Name, int Age);
