@@ -8,6 +8,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Serilog" Version="3.0.1" />
+	  <PackageReference Include="Serilog.Sinks.Notepad" Version="3.0.0" />
+	  <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\HoleDriven.Analyzers\HoleDriven.Analyzers\HoleDriven.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
 		<ProjectReference Include="..\HoleDriven.Core\HoleDriven.Core.csproj" />
 		<ProjectReference Include="..\Holedriven.Extension.Devtool\Holedriven.Extension.Devtool.csproj" />

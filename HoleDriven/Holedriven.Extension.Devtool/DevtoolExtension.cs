@@ -64,8 +64,8 @@ namespace Holedriven.Extension.Devtool
 
     public static class DevtoolExtension
     {
-        public static void ActivateDevtool(
-            this IExtensionMarker _,
+        public static void UseDevtool(
+            this IHolesExtendable _,
             string frontendUri = "https://devtool.holedriven.net")
         {
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder();
@@ -83,6 +83,11 @@ namespace Holedriven.Extension.Devtool
                 webHostBuilder.UseStartup<Startup>();
             });
             IHost host = hostBuilder.Build();
+
+            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+                .SetMinimumLevel(LogLevel.Trace)
+                .AddConsole());
+
 
             host.Start();
 

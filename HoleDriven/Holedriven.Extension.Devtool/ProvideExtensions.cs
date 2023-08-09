@@ -1,5 +1,7 @@
 ﻿using HoleDriven;
+using HoleDriven.Core;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
@@ -29,6 +31,8 @@ namespace Holedriven.Extension.Devtool
             if (!PromptHelper.CanPrompt)
             {
                 Console.WriteLine("⚠️ ⏸️ Please connect a Client for prompting!");
+                var logger = Dependencies.Instance.LoggerFactory.CreateLogger(typeof(ProvideExtensions).FullName);
+                logger.LogWarning("⚠️ ⏸️ Please connect a Client for prompting!");
                 //Devtool.Instance.OpenFrontend();
                 await PromptHelper.UntilClientConnected;
             }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HoleDriven.Core;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -27,6 +29,13 @@ namespace HoleDriven
         {
             var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
             Report.HoleEncountered(description, location);
+            Logger.LogDebug(
+                HoleLogEvents.HoleEncountered,
+                "Hole encountered {HoleId} {HoleType} {HoleDescription} {HoleLocation}",
+                Hole.Provide("Id has to be generated based on the location, think of a generic way that is also compatible with Codegen", "TODO: ID"),
+                nameof(Refactor),
+                description,
+                location);
             return expression.Compile()();
         }
 
