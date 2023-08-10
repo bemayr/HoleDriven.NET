@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HoleDriven.Core.Types;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -29,12 +30,13 @@ namespace HoleDriven
             effect = effect ?? Task.CompletedTask;
 
             var id = Guid.NewGuid();
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
 
-            Report.HoleEncountered(description, location);
-            Report.EffectAsyncStarted(description, id, effect, location);
+            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
+            //Reporters.EffectAsyncStarted(description, id, effect, location);
             await effect;
-            Report.EffectAsyncCompleted(description, id, effect, location);
+            //Reporters.EffectAsyncCompleted(description, id, effect, location);
+            Reporters.InvokeFakeHappened(id, location, description);
         }
 
         public static async Task EffectAsync(
@@ -45,13 +47,15 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var id = Guid.NewGuid();
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
             var task = taskProvider(new EffectAsyncInput(id, description));
 
-            Report.HoleEncountered(description, location);
-            Report.EffectAsyncStarted(description, id, task, location);
+            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
+            //Reporters.EffectAsyncStarted(description, id, task, location);
             await task;
-            Report.EffectAsyncCompleted(description, id, task, location);
+            //Reporters.EffectAsyncCompleted(description, id, task, location);
+            Reporters.InvokeFakeHappened(id, location, description);
+
         }
     }
 }

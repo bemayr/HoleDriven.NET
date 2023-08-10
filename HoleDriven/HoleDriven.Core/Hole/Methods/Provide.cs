@@ -1,4 +1,5 @@
-﻿using HoleDriven.Core;
+﻿using HoleDriven.Core.Logging;
+using HoleDriven.Core.Types;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Runtime.CompilerServices;
@@ -29,8 +30,8 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(nameof(Provide), description, location);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHoleEncountered(HoleType.Fake, description, location);
             ReportProvideHappened(description, value, location);
             return value;
         }
@@ -42,14 +43,14 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(nameof(Provide), description, location);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHoleEncountered(HoleType.Fake, description, location);
             var value = valueProvider(new ProvideInput(description));
             ReportProvideHappened(description, value, location);
             return value;
         }
 
-        private static void ReportProvideHappened(string description, object value, Core.HoleLocation location)
+        private static void ReportProvideHappened(string description, object value, HoleLocation location)
         {
             Console.WriteLine("PROVIDE HAPPENED");
             Logger.LogInformation(
@@ -61,7 +62,7 @@ namespace HoleDriven
                 description,
                 location);
 
-            Report.ProvideHappened(description, value, location);
+            Reporters.InvokeFakeHappened(value, location, description);
         }
     }
 }

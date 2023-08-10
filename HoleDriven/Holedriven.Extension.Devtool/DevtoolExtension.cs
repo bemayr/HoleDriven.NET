@@ -1,6 +1,5 @@
 ﻿using HoleDriven;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using HoleDriven.Core;
 using Microsoft.AspNetCore.Builder;
@@ -13,54 +12,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.WebUtilities;
 using Holedriven.Extension.Devtool.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Net;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Holedriven.Extension.Devtool
 {
-    internal class Devtool
-    {
-        private Devtool(
-            Uri frontendUri,
-            Uri proxyUri,
-            IHubContext<PromptHub> promptsHub)
-        {
-            FrontendUri = frontendUri;
-            ProxyUri = proxyUri;
-            PromptsHub = promptsHub;
-            Uri = new Uri(QueryHelpers.AddQueryString(
-                FrontendUri.AbsoluteUri,
-                new Dictionary<string, string>() { { "connection", ProxyUri.AbsoluteUri } }));
-        }
-
-        public Uri FrontendUri { get; }
-        public Uri ProxyUri { get; }
-        public Uri Uri { get; }
-        public IHubContext<PromptHub> PromptsHub { get; }
-        internal static Devtool Instance { get; private set; }
-
-        internal static void Create(
-            Uri frontendUri,
-            Uri proxyUri,
-            IHubContext<PromptHub> promptsHub)
-        {
-            Debug.Assert(Instance == null, "we can not create the Devtool instance twice");
-            Instance = new Devtool(frontendUri, proxyUri, promptsHub);
-        }
-
-        public void OpenFrontend() => new Process()
-        {
-            StartInfo = new ProcessStartInfo()
-            {
-                UseShellExecute = true,
-                FileName = Uri.AbsoluteUri
-            }
-        }.Start();
-    }
 
     public static class DevtoolExtension
     {
@@ -69,6 +29,15 @@ namespace Holedriven.Extension.Devtool
             string frontendUri = "https://devtool.holedriven.net")
         {
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder();
+
+            // TODO: this is how dependencies can be used in extensions
+            var loggerFactory = extendable.Configuration.LoggerFactory;
+            hostBuilder.ConfigureServices(services =>
+            {
+                // todo: validate that this works
+                services.Replace(new ServiceDescriptor(typeof(ILoggerFactory), extendable.Configuration.LoggerFactory));
+            });
+
             hostBuilder.ConfigureWebHostDefaults(webHostBuilder =>
             {
                 webHostBuilder.ConfigureKestrel(opts =>
@@ -84,10 +53,6 @@ namespace Holedriven.Extension.Devtool
             });
             IHost host = hostBuilder.Build();
 
-
-            // TODO: this is how dependencies can be used in extensions
-            var loggerFactory = extendable.Dependencies.LoggerFactory;
-
             host.Start();
 
             var server = host.Services.GetRequiredService<IServer>();
@@ -98,7 +63,7 @@ namespace Holedriven.Extension.Devtool
             Debug.Assert(addressFeature.Addresses.Count > 0, "we expect to only bind to one address");
             Devtool.Create(new Uri(frontendUri), proxyUri, promptsHub);
 
-            Console.WriteLine(Devtool.Instance.Uri);
+            Dependencies.Instance.LoggerFactory.CreateLogger(typeof(DevtoolExtension).FullName).LogInformation("Devtool started at {ProxyUri}", proxyUri);
         }
 
         public class Startup

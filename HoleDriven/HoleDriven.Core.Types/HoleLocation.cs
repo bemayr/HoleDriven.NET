@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
-namespace HoleDriven.Core
+namespace HoleDriven.Core.Types
 {
     public class HoleLocation
     {

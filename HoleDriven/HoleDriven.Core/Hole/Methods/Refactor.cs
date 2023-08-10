@@ -1,4 +1,5 @@
 ﻿using HoleDriven.Core;
+using HoleDriven.Core.Types;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq.Expressions;
@@ -15,8 +16,8 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(nameof(Refactor), description, location);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHoleEncountered(HoleType.Refactor, description, location);
             expression.Compile()();
         }
 
@@ -27,8 +28,8 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(nameof(Refactor), description, location);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            ReportHoleEncountered(HoleType.Refactor, description, location);
             return expression.Compile()();
         }
 
@@ -40,9 +41,9 @@ namespace HoleDriven
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
             Hole.Idea("use the scope in some way or mark it as mandatory");
-            ReportHoleEncountered(nameof(Refactor), description, location);
+            ReportHoleEncountered(HoleType.Refactor, description, location);
         }
     }
 }

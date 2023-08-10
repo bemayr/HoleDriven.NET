@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HoleDriven.Core
+namespace HoleDriven.Core.Logging
 {
     internal static class HoleLogEvents
     {

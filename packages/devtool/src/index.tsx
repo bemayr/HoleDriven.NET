@@ -3,7 +3,7 @@ import "./style.css";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import * as signalR from "@microsoft/signalr";
 import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/core";
+import Form from '@rjsf/fluent-ui';
 import { useInterval } from "./hooks/useInterval";
 
 export function App() {

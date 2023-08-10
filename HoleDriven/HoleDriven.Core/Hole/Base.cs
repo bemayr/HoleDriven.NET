@@ -1,4 +1,7 @@
 ﻿using HoleDriven.Core;
+using HoleDriven.Core.Logging;
+using HoleDriven.Core.Reporters;
+using HoleDriven.Core.Types;
 using Microsoft.Extensions.Logging;
 
 namespace HoleDriven
@@ -12,9 +15,8 @@ namespace HoleDriven
     [Hole.Idea("add the HoleID as a scope while logging: https://blog.rsuter.com/logging-with-ilogger-recommendations-and-best-practices/#scopes")]
     public static partial class Hole
     {
-        public static Core.Reporters Report => Configure.Reporters;
-
-        public static ILogger Logger => Dependencies.Instance.LoggerFactory.CreateLogger(typeof(Hole).FullName);
+        internal static IReportable Reporters => Core.Reporters.Reporters.Instance;
+        internal static ILogger Logger { get;} = Dependencies.Instance.LoggerFactory.CreateLogger(typeof(Hole).FullName);
 
         private static string GetId(HoleLocation location)
         {
@@ -22,7 +24,7 @@ namespace HoleDriven
             // TODO: "Id has to be generated based on the location, think of a generic way that is also compatible with Codegen",
             return $"{location.FileName}:{location.CallerMemberName}:line {location.LineNumber}";
         }
-        private static void ReportHoleEncountered(string type, string description, Core.HoleLocation location)
+        private static void ReportHoleEncountered(HoleType type, string description, HoleLocation location)
         {
             Logger.LogDebug(
                 HoleLogEvents.HoleEncountered,
@@ -32,7 +34,7 @@ namespace HoleDriven
                 description,
                 location);
 
-            Report.HoleEncountered(description, location, type); // TODO: this type stuff is awful
+            Reporters.InvokeHoleEncountered(type, location, description);
         }
     }
 }

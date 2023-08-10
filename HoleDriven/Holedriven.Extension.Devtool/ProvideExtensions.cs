@@ -6,11 +6,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Holedriven.Extension.Devtool
@@ -30,9 +25,8 @@ namespace Holedriven.Extension.Devtool
         {
             if (!PromptHelper.CanPrompt)
             {
-                Console.WriteLine("⚠️ ⏸️ Please connect a Client for prompting!");
+                // maybe use loggerFactory passed into extension and make the dependencies instance internal
                 var logger = Dependencies.Instance.LoggerFactory.CreateLogger(typeof(ProvideExtensions).FullName);
-                // use loggerFactory passed into extension and make the dependencies instance internal
                 logger.LogWarning("⚠️ ⏸️ Please connect a Client for prompting!");
                 //Devtool.Instance.OpenFrontend();
                 await PromptHelper.UntilClientConnected;
@@ -48,7 +42,6 @@ namespace Holedriven.Extension.Devtool
             PromptHelper.AddPrompt(guid);
 
             await Devtool.Instance.PromptsHub.Clients.All.SendAsync("prompt", new { guid, schemaJson });
-            Console.WriteLine("prompt sent");
 
             // wait for result
             var json = await PromptHelper.GetResult(guid);

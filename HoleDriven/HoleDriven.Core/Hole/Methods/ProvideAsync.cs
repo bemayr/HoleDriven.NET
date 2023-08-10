@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HoleDriven.Core.Types;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -14,12 +15,13 @@ namespace HoleDriven
             [CallerMemberName] string callerMemberName = null)
         {
             var id = Guid.NewGuid();
-            var location = new Core.HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
+            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
 
-            Report.HoleEncountered(description, location);
-            Report.ProvideAsyncStarted(description, id, task, location);
+            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
+            //Reporters.ProvideAsyncStarted(description, id, task, location);
             var value = await task;
-            Report.ProvideAsyncCompleted(description, value, id, task, location);
+            //Reporters.ProvideAsyncCompleted(description, value, id, task, location);
+            Reporters.InvokeFakeHappened(new { value, id }, location, description);
 
             return value;
         }
