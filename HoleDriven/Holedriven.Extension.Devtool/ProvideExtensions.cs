@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Holedriven.Extension.Devtool
 {
-
+    [Hole.Refactor("Improve the usage of Dependencies in the static methods, they should somehow be provided via the extension entrypoint")]
     public static class ProvideExtensions
     {
         public static TValue Prompt<TValue>(this Hole.IProvideInput _)
@@ -27,7 +27,7 @@ namespace Holedriven.Extension.Devtool
             {
                 // maybe use loggerFactory passed into extension and make the dependencies instance internal
                 var logger = Dependencies.Instance.LoggerFactory.CreateLogger(typeof(ProvideExtensions).FullName);
-                logger.LogWarning("⚠️ ⏸️ Please connect a Client for prompting!");
+                logger.LogWarning("No client was connect that can handle prompts...");
                 //Devtool.Instance.OpenFrontend();
                 await PromptHelper.UntilClientConnected;
             }

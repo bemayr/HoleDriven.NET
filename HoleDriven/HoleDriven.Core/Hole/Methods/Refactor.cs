@@ -34,6 +34,7 @@ namespace HoleDriven
         }
 
         [Hole.Idea("enable marking of Blocks/Scopes, e.g. NextLine, following if/switch/loop, also make sure to check the correct usage of those scopes with an analyzer")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "do something with the scope")]
         public static void Refactor<T>(
             string description,
             object scope,

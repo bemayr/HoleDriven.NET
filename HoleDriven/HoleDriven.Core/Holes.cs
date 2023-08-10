@@ -6,28 +6,30 @@ using System.Text;
 
 namespace HoleDriven.Core
 {
-    public interface IHolesConfiguration : IHolesCanSetLogger, IHolesExtendable { }
-
-    public class HolesConfiguration : IHolesConfiguration
+    public class HolesConfiguration : IHolesCanSetLogger, IHolesCanConfigureReporters
     {
         public IConfiguration Configuration => Core.Configuration.Instance;
 
-        public IHolesExtendable SetLogger(ILoggerFactory loggerFactory)
+        public IHolesCanConfigureReporters SetLogger(ILoggerFactory loggerFactory)
         {
             Dependencies.SetLoggerFactory(loggerFactory);
             return this;
         }
 
-        public IHolesExtendable SetReporters(ILoggerFactory loggerFactory)
+        public IHolesExtendable SetReporters(Action<IReporters> setReporters)
         {
-            Dependencies.SetLoggerFactory(loggerFactory);
+            setReporters(Holes.Reporters);
             return this;
         }
     }
 
-    public interface IHolesCanSetLogger
+    public interface IHolesCanSetLogger : IHolesExtendable // entry interface
     {
-        IHolesExtendable SetLogger(ILoggerFactory loggerFactory);
+        IHolesCanConfigureReporters SetLogger(ILoggerFactory loggerFactory);
+    }
+    public interface IHolesCanConfigureReporters : IHolesExtendable
+    {
+        IHolesExtendable SetReporters(Action<IReporters> reporters);
     }
     public interface IHolesExtendable
     {
@@ -35,7 +37,7 @@ namespace HoleDriven.Core
     }
     public static class Holes
     {
-        public static void Configure(Action<IHolesConfiguration> configureHoles) => configureHoles(new HolesConfiguration());
+        public static void Configure(Action<IHolesCanSetLogger> configureHoles) => configureHoles(new HolesConfiguration());
 
         public static IReporters Reporters => Core.Reporters.Reporters.Instance;
     }

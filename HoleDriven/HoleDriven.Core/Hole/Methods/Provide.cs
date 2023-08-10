@@ -52,7 +52,6 @@ namespace HoleDriven
 
         private static void ReportProvideHappened(string description, object value, HoleLocation location)
         {
-            Console.WriteLine("PROVIDE HAPPENED");
             Logger.LogInformation(
                 HoleLogEvents.HoleEncountered,
                 "Provide happened {HoleId} {value} {HoleType} {HoleDescription} {HoleLocation}",

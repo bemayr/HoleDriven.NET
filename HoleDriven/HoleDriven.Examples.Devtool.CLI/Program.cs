@@ -1,24 +1,37 @@
 ﻿using Holedriven.Extension.Devtool;
 using HoleDriven;
 using HoleDriven.Core;
+using HoleDriven.Core.Reporters;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Text;
 
-Hole.Idea("Currently it is not possible to Set the reporters, change this and show an example", Scope.NextLine);
+EnableEmojisInConsole();
+
 Holes.Configure(holes => holes
     .SetLogger(CreateLoggerFactory())
+    .SetReporters(reporters =>
+    {
+        reporters.HoleEncountered += (HoleEncountered.Params hole) =>
+        {
+            if (hole.Type == HoleDriven.Core.Types.HoleType.Fake)
+                Console.WriteLine("🧩");
+        };
+    })
     .UseDevtool(frontendUri: "http://localhost:5173"));
 
 Console.Write("Please tell me who you are: ");
 var person = Hole.Provide(
-    "Prompt the User for his name and age",
+    "Prompt the User for his/her Name and Age (look up how to read from the command line)",
     value => value.Prompt<Person>());
 
 Console.WriteLine($"Hello {person?.Name}, you are {person?.Age} years old");
+WaitForKeyPressed();
 
-Console.WriteLine("Press any key to exit the application...");
-Console.Read();
-
+static void EnableEmojisInConsole()
+{
+    Console.OutputEncoding = Encoding.UTF8;
+}
 static ILoggerFactory CreateLoggerFactory()
 {
     var logger = new LoggerConfiguration()
@@ -30,6 +43,11 @@ static ILoggerFactory CreateLoggerFactory()
         .AddSerilog(logger);
 
     return loggerFactory;
+}
+static void WaitForKeyPressed()
+{
+    Console.WriteLine("Press any key to exit the application...");
+    Console.Read();
 }
 
 record Person(string Name, int Age);

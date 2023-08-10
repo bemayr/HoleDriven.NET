@@ -15,6 +15,7 @@ namespace Holedriven.Extension.Devtool.Hubs
             this.logger = logger;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "this is needed for SignalR, but should be solved once the Hub is not a static member anymore")]
         public void ProvideValue(Guid guid, string json)
         {
             PromptHelper.SignalResult(guid, json);
@@ -23,7 +24,6 @@ namespace Holedriven.Extension.Devtool.Hubs
         public override Task OnConnectedAsync()
         {
             PromptHelper.ClientConnected(Context.ConnectionId);
-            //Console.WriteLine("connected: " + Context.ConnectionId);
             logger.LogInformation(DevtoolLogEvents.ClientConnected, "Client connected: {ConnectionId}", Context.ConnectionId);
             return base.OnConnectedAsync();
         }
@@ -31,7 +31,6 @@ namespace Holedriven.Extension.Devtool.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             PromptHelper.ClientDisconnected(Context.ConnectionId);
-            //Console.WriteLine("disconnected: " + Context.ConnectionId);
             logger.LogInformation(DevtoolLogEvents.ClientDisconnected, "Client disconnected: {ConnectionId}", Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }

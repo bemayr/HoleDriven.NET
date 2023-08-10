@@ -64,7 +64,6 @@ export function App() {
 
   return (
     <>
-      <h1>The current state is: {state}</h1>
       <div>
         {!promptSchema ? (
           <div>no prompt available</div>
