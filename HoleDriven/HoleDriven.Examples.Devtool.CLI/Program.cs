@@ -79,7 +79,7 @@ static class Extensions
     public static TValue Prompt<TValue>(this Hole.IFakeExtension input, string explanation = "")
     {
         Console.WriteLine($"Prompting: {input.Information.Description} ({explanation})");
-        return default;
+        return default!;
     }
 
     public async static Task<TValue> ChooseAsync<TValue>(this Hole.IFakeExtension _, IEnumerable<TValue> choices, string explanation = "")

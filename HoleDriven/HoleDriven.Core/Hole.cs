@@ -141,7 +141,7 @@ namespace HoleDriven.Core
 
         public static TValue Fake<TValue>(
             string description,
-            FakeValueProvider<TValue> fakeValueProvider,
+            FakeProvider<TValue> fakeValueProvider,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
@@ -163,7 +163,7 @@ namespace HoleDriven.Core
 
         public static Task<TValue> Fake<TValue>(
             string description,
-            FakeValueProvider<Task<TValue>> fakeValueProvider,
+            FakeProvider<Task<TValue>> fakeValueProvider,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
@@ -244,7 +244,7 @@ namespace HoleDriven.Core
 
         public static void Fake(
             string description,
-            FakeEffectProvider fakeEffectProvider,
+            FakeVoidProvider fakeEffectProvider,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
@@ -265,7 +265,7 @@ namespace HoleDriven.Core
 
         public static Task Fake(
             string description,
-            FakeAsyncEffectProvider fakeAsyncEffectProvider,
+            FakeProvider<Task> fakeAsyncEffectProvider,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
@@ -283,9 +283,8 @@ namespace HoleDriven.Core
             return fakeAsyncEffectProvider(new FakeExtensionInput(information)).WithReporting(information, new Guid());
         }
 
-        public delegate TValue FakeValueProvider<TValue>(IFakeExtension extension);
-        public delegate void FakeEffectProvider(IFakeExtension extension);
-        public delegate Task FakeAsyncEffectProvider(IFakeExtension extension);
+        public delegate TValue FakeProvider<TValue>(IFakeExtension extension);
+        public delegate void FakeVoidProvider(IFakeExtension extension);
 
         private class FakeExtensionInput : IFakeExtension
         {
