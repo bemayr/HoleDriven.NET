@@ -1,4 +1,4 @@
-﻿using HoleDriven;
+﻿using HoleDriven.Core;
 
 namespace HoleDriven.Analyzers.Tests.TestData
 {

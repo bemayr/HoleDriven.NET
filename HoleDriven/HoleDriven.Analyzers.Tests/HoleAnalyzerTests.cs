@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using HoleDriven.Core;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
@@ -127,7 +128,7 @@ namespace HoleDriven.Analyzers.Tests
                     Sources = { source },
                     AdditionalReferences =
                     {
-                        MetadataReference.CreateFromFile(typeof(HoleDriven.Hole).Assembly.Location)
+                        MetadataReference.CreateFromFile(typeof(Hole).Assembly.Location)
                     },
                     ExpectedDiagnostics =
                     {

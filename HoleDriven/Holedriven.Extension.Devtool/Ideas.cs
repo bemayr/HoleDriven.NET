@@ -1,4 +1,4 @@
-﻿using HoleDriven;
+﻿using HoleDriven.Core;
 using System;
 
 namespace Holedriven.Extension.Devtool

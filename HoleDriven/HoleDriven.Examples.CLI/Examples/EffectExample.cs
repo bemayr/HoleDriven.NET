@@ -1,4 +1,6 @@
-﻿namespace HoleDriven.Examples.CLI.Examples
+﻿using HoleDriven.Core;
+
+namespace HoleDriven.Examples.CLI.Examples
 {
     internal class EffectExample : IExample
     {

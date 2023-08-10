@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Extensions\" />
+	  <Folder Include="Hole\" />
 	</ItemGroup>
 
 </Project>

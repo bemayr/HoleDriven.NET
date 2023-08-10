@@ -1,4 +1,5 @@
-﻿using HoleDriven.Extension.Bogus;
+﻿using HoleDriven.Core;
+using HoleDriven.Extension.Bogus;
 
 namespace HoleDriven.Examples.CLI.Examples
 {

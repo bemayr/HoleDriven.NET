@@ -1,6 +1,7 @@
-﻿using Spectre.Console;
+﻿using HoleDriven.Core;
+using Spectre.Console;
 
-[assembly: HoleDriven.Hole.Idea("holes even work at assembly level")]
+[assembly: Hole.Idea("holes even work at assembly level")]
 
 namespace HoleDriven.Examples.CLI.Examples
 {

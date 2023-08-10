@@ -1,4 +1,4 @@
-﻿using HoleDriven;
+﻿using HoleDriven.Core;
 using System.Threading.Tasks;
 
 namespace HoleDriven.Analyzers.Tests.TestData

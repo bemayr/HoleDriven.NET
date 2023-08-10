@@ -1,5 +1,4 @@
-﻿using HoleDriven;
-using HoleDriven.Core;
+﻿using HoleDriven.Core;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

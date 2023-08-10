@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using HoleDriven.Core;
 using System;
 
 namespace HoleDriven.Extension.Bogus

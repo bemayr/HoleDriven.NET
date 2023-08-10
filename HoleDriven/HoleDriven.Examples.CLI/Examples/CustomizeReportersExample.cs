@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using HoleDriven.Core;
+using Spectre.Console;
 
 namespace HoleDriven.Examples.CLI.Examples
 {
