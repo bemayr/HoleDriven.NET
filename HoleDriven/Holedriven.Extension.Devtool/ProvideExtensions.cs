@@ -12,7 +12,7 @@ namespace Holedriven.Extension.Devtool
     [Hole.Refactor("Improve the usage of Dependencies in the static methods, they should somehow be provided via the extension entrypoint")]
     public static class ProvideExtensions
     {
-        public static TValue Prompt<TValue>(this Hole.IProvideInput _)
+        public static TValue Prompt<TValue>(this Hole.IFakeExtension _)
         {
             return PromptAsync<TValue>()
                 .ConfigureAwait(false)

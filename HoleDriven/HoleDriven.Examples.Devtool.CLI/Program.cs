@@ -1,9 +1,15 @@
 ﻿using Holedriven.Extension.Devtool;
 using HoleDriven.Core;
 using HoleDriven.Core.Reporters;
+using HoleDriven.Core.Types;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Reflection;
 using System.Text;
+
+var @class = Type.GetType("Holedriven.Lookup");
+var property = @class.GetField("Holes", BindingFlags.Public | BindingFlags.Static);
+var lookup = property.GetValue(null);
 
 EnableEmojisInConsole();
 
@@ -11,16 +17,16 @@ Holes.Configure(holes => holes
     .SetLogger(CreateLoggerFactory())
     .SetReporters(reporters =>
     {
-        reporters.HoleEncountered += (HoleEncountered.Params hole) =>
+        reporters.HoleEncountered += (hole) =>
         {
-            if (hole.Type == HoleDriven.Core.Types.HoleType.Fake)
+            if (hole.Type == HoleType.Fake)
                 Console.WriteLine("🧩");
         };
     })
     .UseDevtool(frontendUri: "http://localhost:5173"));
 
 Console.Write("Please tell me who you are: ");
-var person = Hole.Provide(
+var person = Hole.Fake(
     "Prompt the User for his/her Name and Age (look up how to read from the command line)",
     value => value.Prompt<Person>());
 
@@ -74,13 +80,25 @@ static void WaitForKeyPressed()
 
 record Person(string Name, int Age);
 
+namespace Holedriven
+{
+    public static class Lookup
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
+        public static readonly IDictionary<HoleLocation, HoleInformation> Holes = new Dictionary<HoleLocation, HoleInformation>()
+        {
+            [new HoleLocation("", 0, "")] = new HoleInformationFake(null, "desc")
+        };
+    }
+}
+
 static class Extensions
 {
-    public static TValue Prompt<TValue>(this Hole.IFakeExtension input, string explanation = "")
-    {
-        Console.WriteLine($"Prompting: {input.Information.Description} ({explanation})");
-        return default!;
-    }
+    //public static TValue Prompt<TValue>(this Hole.IFakeExtension input, string explanation = "")
+    //{
+    //    Console.WriteLine($"Prompting: {input.Information.Description} ({explanation})");
+    //    return default!;
+    //}
 
     public async static Task<TValue> ChooseAsync<TValue>(this Hole.IFakeExtension _, IEnumerable<TValue> choices, string explanation = "")
     {

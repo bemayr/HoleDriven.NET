@@ -1,6 +1,6 @@
 ﻿namespace HoleDriven.Core.Types
 {
-    internal enum HoleScope
+    public enum HoleScope
     {
         Nearest,
         NextLine

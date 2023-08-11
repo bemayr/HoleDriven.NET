@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -19,23 +18,26 @@ namespace HoleDriven.Core
     [Idea("switch configuration to a standard approach like https://github.com/nickdodd79/AutoBogus#conventions")]
     [Idea("enable **Markdown** in holes, e.g. using [Markdig](https://github.com/xoofx/markdig) for stripping out markdown while reporting the holes using the analyzer")]
     [Idea("add the HoleID as a scope while logging: https://blog.rsuter.com/logging-with-ilogger-recommendations-and-best-practices/#scopes")]
+    
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Parameters are extracted via Codegen and used lazily via Reflection at Runtime")]
     public static partial class Hole
     {
         internal static IReportable Reporters => Core.Reporters.Reporters.Instance;
         internal static ILogger Logger { get; } = Dependencies.Instance.LoggerFactory.CreateLogger(typeof(Hole).FullName);
 
-        private static string GetId(HoleLocation location)
-        {
-            // a hole here leads to a StackOverflow of course
-            // TODO: "Id has to be generated based on the location, think of a generic way that is also compatible with Codegen",
-            return $"{location.FileName}:{location.CallerMemberName}:line {location.LineNumber}";
-        }
-
         private static readonly Lazy<IDictionary<HoleLocation, HoleInformation>> lazyHoleLookup = new Lazy<IDictionary<HoleLocation, HoleInformation>>(
-            () => (IDictionary<HoleLocation, HoleInformation>)Type
-                .GetType("Holedriven.Lookup")
-                .GetProperty("Holes", BindingFlags.Public | BindingFlags.Static)
-                .GetValue(null));
+            () =>
+            {
+                //return (IDictionary<HoleLocation, HoleInformation>)Type
+                //                .GetType("Holedriven.Lookup")
+                //                .GetField("Holes", BindingFlags.Public | BindingFlags.Static)
+                //                .GetValue(null);
+                var entry = Assembly.GetEntryAssembly();
+                var @class = entry.GetType("Holedriven.Lookup");
+                var property = @class.GetField("Holes", BindingFlags.Public | BindingFlags.Static);
+                var lookup = property.GetValue(null);
+                return (IDictionary<HoleLocation, HoleInformation>)lookup;
+            });
         private static IDictionary<HoleLocation, HoleInformation> HoleLookup => lazyHoleLookup.Value;
         
         private static TInformation GetHoleInformation<TInformation>(string callerFilePath, int callerLineNumber, string callerMemberName)
@@ -368,11 +370,10 @@ namespace HoleDriven.Core
             Logger.LogInformation(
                 HoleLogEvents.FakeAsyncEffectStarted,
                 "Faking of effect completed ({FakeId}, {HoleInformation})",
-                value,
                 fakeId,
                 information);
 
-            Reporters.InvokeFakeAsyncEffectCompleted(information, fakeId, value);
+            Reporters.InvokeFakeAsyncEffectCompleted(information, fakeId);
         }
         private static void ReportFakeAsyncEffectFaulted(HoleInformationFake information, Guid fakeId, Exception exception)
         {
@@ -426,207 +427,90 @@ namespace HoleDriven.Core
             });
         }
         #endregion
-
-        #region Effect
-        public static void Effect(
-            string description,
-            [CallerFilePath] string callerFilePath = null,
-            [CallerLineNumber] int callerLineNumber = int.MinValue,
-            [CallerMemberName] string callerMemberName = null)
-        {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
-            Reporters.InvokeFakeHappened(null, location, description);
-        }
-        public delegate Task SetAsyncResultProvider(EffectAsyncInput task);
-
-        public class EffectAsyncInput
-        {
-            public Guid Id { get; }
-            public string Description { get; }
-            public EffectAsyncInput(Guid id, string description)
-            {
-                Id = id;
-                Description = description;
-            }
-        }
-
-        public static async Task EffectAsync(
-            string description,
-            Task effect = null,
-            [CallerFilePath] string callerFilePath = null,
-            [CallerLineNumber] int callerLineNumber = int.MinValue,
-            [CallerMemberName] string callerMemberName = null)
-        {
-            effect = effect ?? Task.CompletedTask;
-
-            var id = Guid.NewGuid();
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-
-            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
-            //Reporters.EffectAsyncStarted(description, id, effect, location);
-            await effect;
-            //Reporters.EffectAsyncCompleted(description, id, effect, location);
-            Reporters.InvokeFakeHappened(id, location, description);
-        }
-
-        public static async Task EffectAsync(
-            string description,
-            SetAsyncResultProvider taskProvider,
-            [CallerFilePath] string callerFilePath = null,
-            [CallerLineNumber] int callerLineNumber = int.MinValue,
-            [CallerMemberName] string callerMemberName = null)
-        {
-            var id = Guid.NewGuid();
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            var task = taskProvider(new EffectAsyncInput(id, description));
-
-            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
-            //Reporters.EffectAsyncStarted(description, id, task, location);
-            await task;
-            //Reporters.EffectAsyncCompleted(description, id, task, location);
-            Reporters.InvokeFakeHappened(id, location, description);
-
-        }
-        #endregion
-        #region Provide
-        public delegate TValue ProvideValueProvider<TValue>(IProvideInput hole);
-
-        public interface IProvideInput
-        {
-            string Description { get; }
-        }
-
-        internal class ProvideInput : IProvideInput
-        {
-            public string Description { get; }
-            public ProvideInput(string description) => Description = description;
-        }
-
-        public static TValue Provide<TValue>(
-            string description,
-            TValue value,
-            [CallerFilePath] string callerFilePath = null,
-            [CallerLineNumber] int callerLineNumber = int.MinValue,
-            [CallerMemberName] string callerMemberName = null)
-        {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(HoleType.Fake, description, location);
-            ReportProvideHappened(description, value, location);
-            return value;
-        }
-
-        public static TValue Provide<TValue>(
-            string description,
-            ProvideValueProvider<TValue> valueProvider,
-            [CallerFilePath] string callerFilePath = null,
-            [CallerLineNumber] int callerLineNumber = int.MinValue,
-            [CallerMemberName] string callerMemberName = null)
-        {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(HoleType.Fake, description, location);
-            var value = valueProvider(new ProvideInput(description));
-            ReportProvideHappened(description, value, location);
-            return value;
-        }
-
-        private static void ReportProvideHappened(string description, object value, HoleLocation location)
-        {
-            Logger.LogInformation(
-                HoleLogEvents.HoleEncountered,
-                "Provide happened {HoleId} {value} {HoleType} {HoleDescription} {HoleLocation}",
-                GetId(location),
-                value,
-                nameof(Provide),
-                description,
-                location);
-
-            Reporters.InvokeFakeHappened(value, location, description);
-        }
-        public static async Task<TValue> ProvideAsync<TValue>(
-            string description,
-            Task<TValue> task,
-            [CallerFilePath] string callerFilePath = null,
-            [CallerLineNumber] int callerLineNumber = int.MinValue,
-            [CallerMemberName] string callerMemberName = null)
-        {
-            var id = Guid.NewGuid();
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-
-            Reporters.InvokeHoleEncountered(HoleType.Fake, location, description);
-            //Reporters.ProvideAsyncStarted(description, id, task, location);
-            var value = await task;
-            //Reporters.ProvideAsyncCompleted(description, value, id, task, location);
-            Reporters.InvokeFakeHappened(new { value, id }, location, description);
-
-            return value;
-        }
-        #endregion
         #region Idea
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Scope is only needed for the Source Analyzer")]
         public static void Idea(
             string description,
-            Scope scope = Scope.Nearest,
+            HoleScope scope = HoleScope.Nearest,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Reporters.InvokeHoleEncountered(HoleType.Idea, location, description);
+            var information = GetHoleInformation<HoleInformationIdea>(callerFilePath, callerLineNumber, callerMemberName);
+            Reporters.InvokeHoleEncountered(information);
         }
         #endregion
         #region Refactor
         public static void Refactor(
             string description,
-            Expression<Action> expression, // TODO: maybe capture the expression via Caller...
+            Action source,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(HoleType.Refactor, description, location);
-            expression.Compile()();
+            // validate mandatory parameters
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            // get information
+            var information = GetHoleInformation<HoleInformationRefactor>(callerFilePath, callerLineNumber, callerMemberName);
+
+            // report hole encountered
+            ReportHoleEncountered(HoleType.Refactor, information);
+
+            // execute hole
+            source.Invoke();
         }
 
-        public static T Refactor<T>(
+        public static TValue Refactor<TValue>(
             string description,
-            Expression<Func<T>> expression,
+            Func<TValue> source,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            ReportHoleEncountered(HoleType.Refactor, description, location);
-            return expression.Compile()();
+            // validate mandatory parameters
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            // get information
+            var information = GetHoleInformation<HoleInformationRefactor>(callerFilePath, callerLineNumber, callerMemberName);
+
+            // report hole encountered
+            ReportHoleEncountered(HoleType.Refactor, information);
+
+            // execute hole
+            return source.Invoke();
         }
 
         [Idea("enable marking of Blocks/Scopes, e.g. NextLine, following if/switch/loop, also make sure to check the correct usage of those scopes with an analyzer")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "do something with the scope")]
         public static void Refactor<T>(
             string description,
-            object scope,
+            HoleScope scope,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            Idea("use the scope in some way or mark it as mandatory");
-            ReportHoleEncountered(HoleType.Refactor, description, location);
+            // get information
+            var information = GetHoleInformation<HoleInformationRefactor>(callerFilePath, callerLineNumber, callerMemberName);
+
+            // report hole encountered
+            ReportHoleEncountered(HoleType.Refactor, information);
         }
         #endregion
         #region NotImplemented
         [DebuggerHidden]
-        public static void Throw(
+        public static NotImplementedException NotImplemented(
             string description,
             [CallerFilePath] string callerFilePath = null,
             [CallerLineNumber] int callerLineNumber = int.MinValue,
             [CallerMemberName] string callerMemberName = null)
         {
-            var location = new HoleLocation(callerFilePath, callerLineNumber, callerMemberName);
-            var exception = new HoleNotFilledException(description);
+            // get information
+            var information = GetHoleInformation<HoleInformationRefactor>(callerFilePath, callerLineNumber, callerMemberName);
 
-            Reporters.InvokeHoleEncountered(HoleType.NotImplemented, location, description);
-            throw exception;
+            // report hole encountered
+            ReportHoleEncountered(HoleType.Refactor, information);
+
+            // execute hole
+            return new HoleNotFilledException(description);
         }
         #endregion
 
